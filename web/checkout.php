@@ -1,7 +1,7 @@
 <?php
 ob_start();
 session_start();
-//include 'header.php';
+include 'header.php';
 include '../function.php';
 include '../mail.php';
 
