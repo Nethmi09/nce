@@ -1,0 +1,46 @@
+/* Submit Button styles */
+button.submit {
+    background-color: #5085A5;
+    border: none;
+    float: right;
+    color: white;
+}
+
+/* Cancel Button styles */
+button.cancel {
+    background-color: #8FC1E3;
+    border: none;
+    color: white;
+}
+
+/* Card header color */
+.card-header {
+    background-color: #5085A5 !important;
+    border: none;
+}
+
+/* Card title color */
+.card-title {
+    color: #ffffff;
+}
+
+/* Hover styles for cancel button of the forms*/
+button.cancel:hover {
+    background-color: #8fc1e366;
+    color: white;
+}
+
+/* Hover styles for submit button of the forms*/
+button.submit:hover {
+    background-color: #04497285 ;
+    color: white;
+}
+
+/*Uploaded image style to square*/
+.img-square {
+    border-radius: 0; /* Or any other specific styling for square shape */
+}
+
+
+
+

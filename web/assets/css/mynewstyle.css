@@ -1,0 +1,47 @@
+.register-btn{
+    margin-right: 25px !important;
+}
+
+.form-group input{
+    font-size: 0.8em !important;
+    padding-top: 8px;
+    padding-bottom: 8px;
+}
+
+.form-group select{
+    font-size: 0.8em !important;
+    padding-top: 8px;
+    padding-bottom: 8px;
+}
+
+/*Dashboard View button styles*/
+.view-button {
+    background-color: #8FC1E3;
+}
+
+.coupon-label {
+    font-size: 1rem; /* Increase the font size as needed */
+    font-weight: bold;
+}
+
+.apply-coupon-btn {
+    background-color: white;
+    color: black;
+    border: 1px solid black;
+    padding: 8px 16px;
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.apply-coupon-btn:hover {
+    background-color: black;
+    color: white;
+}
+
+  .rounded-border {
+        border: 1px solid #ccc;
+        border-radius: 15px;
+        padding: 15px;
+        background-color: #f9f9f9;
+    }
+
