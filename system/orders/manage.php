@@ -47,12 +47,14 @@ $breadcrumb_item_active = "Manage";
                 ?>
                 <!--Table Start-->
 
-                <table id="datatable" class="table table-bordered table-striped">
+                <table id="" class="table table-bordered table-striped">
                     <thead>
                         <tr>
                             <th>ID</th>
+                             <th>Order Number</th>
                             <th>Customer Name</th>  
-                            <th>Order Number</th>
+                            <th>Customer Email</th>
+                            <th>Contact Number</th>
                             <th>Order Date</th>                            
                             <th>Actions</th>
                         </tr>
@@ -64,14 +66,16 @@ $breadcrumb_item_active = "Manage";
                                 ?>
                                 <tr>
                                     <td><?= $row['OrderId'] ?></td>
-                                    <td><?= $row['FirstName'] ?> <?= $row['LastName'] ?></td> 
                                     <td><?= $row['OrderNumber'] ?></td> 
+                                    <td><?= $row['FirstName'] ?> <?= $row['LastName'] ?></td> 
+                                    <td><?= $row['PersonalEmail'] ?></td> 
+                                     <td><?= $row['PersonalContactMobile'] ?></td> 
                                     <td><?= $row['OrderDate'] ?></td>
 
                                     <td>
-                                        <a href="<?= SYS_URL ?>orders/view.php?orderid=<?= $row['OrderId'] ?>" class="btn btn-info"><i class="fas fa-eye"></i></a>
-                                        <a href="<?= SYS_URL ?>orders/edit.php?orderid=<?= $row['OrderId'] ?>" class="btn btn-warning"><i class="fas fa-edit"></i></a>
-                                        <a href="<?= SYS_URL ?>orders/delete.php?orderid=<?= $row['OrderId'] ?>" class="btn btn-danger" onclick="return confirmDelete()"><i class="fas fa-trash"></i></a>
+                                        <a href="<?= SYS_URL ?>orders/view_order_products.php?order_id=<?= $row['OrderId'] ?>" class="btn btn-info"><i class="fas fa-eye"></i></a>
+                                        <a href="<?= SYS_URL ?>orders/edit.php?order_id=<?= $row['OrderId'] ?>" class="btn btn-warning"><i class="fas fa-edit"></i></a>
+                                        <a href="<?= SYS_URL ?>orders/delete.php?order_id=<?= $row['OrderId'] ?>" class="btn btn-danger" onclick="return confirmDelete()"><i class="fas fa-trash"></i></a>
                                     </td>
                                 </tr>
 
@@ -91,6 +95,6 @@ $breadcrumb_item_active = "Manage";
     </div>
 </div>
 <?php
-$content = ob_get_clean();
-include '../layouts.php';
+$content = ob_get_clean(); // Capture the output buffer content
+include '../layouts.php'; // Include the layout for the page
 ?>

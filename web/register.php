@@ -4,6 +4,7 @@ session_start();
 include 'header.php';
 include '../function.php';
 include '../mail.php';
+include '../config.php';
 ?> 
 
 <!-- Single Page Header start -->
@@ -11,7 +12,6 @@ include '../mail.php';
     <h1 class="text-center text-white display-6">Register</h1>
 </div>
 <!-- Single Page Header End -->
-
 
 <!-- Register Form Start -->
 <div class="container-fluid contact py-5">
@@ -21,7 +21,10 @@ include '../mail.php';
                 <div class="col-12">
                     <div class="text-center mx-auto" style="max-width: 700px;">
                         <h1 class="text-primary">Registration Form</h1>
-                        <p class="mb-4">Register for our great service.</p>
+                         <h4 class="text-primary">
+                            Already have an account?
+                            <a href="register.php" class="text-primary" style="text-decoration: underline;">Login</a>
+                        </h4>
                     </div>
                 </div>
 
@@ -39,9 +42,11 @@ include '../mail.php';
                         $alt_mobile = dataClean($alt_mobile);
                         $email = dataClean($email);
                         $user_name = dataClean($user_name);
+                        $password = dataClean($password);
+                        $confirm_password = dataClean($confirm_password);
 
                         $message = array();
-                        //Required validation-----------------------------------------------
+                        //Required validations-----------------------------------------------
                         if (empty($first_name)) {
                             $message['first_name'] = "First Name is required...!";
                         }
@@ -69,18 +74,20 @@ include '../mail.php';
                         if (empty($password)) {
                             $message['password'] = "Password is required...!";
                         }
-//                        if (empty($confirm_password)) {
-//                            $message['confirm_password'] = "Confirm Password is required...!";
-//                        }
+                        if (empty($confirm_password)) {
+                            $message['confirm_password'] = "Confirm Password is required...!";
+                        }
 
-                        
-                        //Advance validation------------------------------------------------
+                        //Advance validations------------------------------------------------
+
                         if (ctype_alpha(str_replace(' ', '', $first_name)) === false) {
                             $message['first_name'] = "Only letters and white space allowed";
                         }
                         if (ctype_alpha(str_replace(' ', '', $last_name)) === false) {
                             $message['last_name'] = "Only letters and white space allowed";
                         }
+
+                        // Email validation(Email already exist or not)----------------------
 
                         if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
                             $message['email'] = "Invalid Email Address...!";
@@ -94,6 +101,8 @@ include '../mail.php';
                             }
                         }
 
+                        // User Name validation(User name already exist or not)-------------
+
                         if (!empty($user_name)) {
                             $db = dbConn();
                             $sql = "SELECT * FROM users WHERE UserName='$user_name'";
@@ -104,38 +113,60 @@ include '../mail.php';
                             }
                         }
 
+                        //Password Validation(password stength)------------------------------------------------
+
                         if (!empty($password)) {
-                            if (strlen($password) < 8) {
-                                $message['password'] = "Password should be 8 characters more...!";
+                            $uppercase = preg_match('@[A-Z]@', $password);
+                            $lowercase = preg_match('@[a-z]@', $password);
+                            $number = preg_match('@[0-9]@', $password);
+                            $specialChars = preg_match('@[^\w]@', $password);
+
+                            if (!$uppercase || !$lowercase || !$number || !$specialChars || strlen($password) < 8) {
+                                $message['password'] = 'Password should be at least 8 characters in length and should include at least one uppercase letter, one lowercase letter, one number, and one special character.';
                             }
                         }
-                        
-//                         if (!empty($confirm_password)) {
-//                            if (strlen($confirm_password) < 8) {
-//                                $message['confirm_password'] = "Confirm Password should be 8 characters more...!";
-//                            }
-//                        }
+
+                        //Confirm Password Validation(confirm password stength)--------------------------------
+
+                        if (!empty($confirm_password)) {
+                            $uppercase = preg_match('@[A-Z]@', $confirm_password);
+                            $lowercase = preg_match('@[a-z]@', $confirm_password);
+                            $number = preg_match('@[0-9]@', $confirm_password);
+                            $specialChars = preg_match('@[^\w]@', $confirm_password);
+
+                            if (!$uppercase || !$lowercase || !$number || !$specialChars || strlen($confirm_password) < 8) {
+                                $message['confirm_password'] = 'Password should be at least 8 characters in length and should include at least one uppercase letter, one lowercase letter, one number, and one special character.';
+                            }
+                        }
+
+                        // Check password and confirm password same
+                        if ($password != $confirm_password) {
+                            $message['confirm_password'] = "Password and confirm password should be the same";
+                        }
 
 
                         if (empty($message)) {
                             //Use bcrypt hashing algorithm
                             $pw = password_hash($password, PASSWORD_DEFAULT);
-                            $db = dbConn();
-                          //youhave to check the query
-                            echo $sql = "INSERT INTO `users`(`UserName`, `Password`,`UserType`) VALUES ('$user_name','$pw' , 'customer')";
-                            $db->query($sql);
+                            $conpw = password_hash($confirm_password, PASSWORD_DEFAULT);
 
+                            $db = dbConn();
+                            $token = bin2hex(random_bytes(16));
+
+                            //Insert data to users table
+                            echo $sql = "INSERT INTO users(UserName, Password, ConfirmPassword, FirstName, LastName, Email, UserType, token, is_verified) VALUES ('$user_name','$pw','$conpw','$first_name','$last_name','$email','customer','$token','0')";
+                            $db->query($sql);
                             $user_id = $db->insert_id;
                             $reg_number = date('Y') . date('m') . date('d') . $user_id;
                             $_SESSION['RNO'] = $reg_number;
 
-                           echo $sql = "INSERT INTO `customers`(`FirstName`, `LastName`, `AddressLine1`, `AddressLine2`, `City`, `DistrictId`, `ContactMobile`, `AlternateMobile`, `Email`, `RegNo`, `UserId`) VALUES ('$first_name','$last_name','$address_line_1','$address_line_2','$city','$district','$contact_mobile','$alt_mobile','$email', '$reg_number' , '$user_id')";
+                            echo $sql = "INSERT INTO customers(FirstName, LastName, AddressLine1, AddressLine2, City, DistrictId, ContactMobile, AlternateMobile, Email, RegNo, UserId) VALUES ('$first_name','$last_name','$address_line_1','$address_line_2','$city','$district','$contact_mobile','$alt_mobile','$email', '$reg_number' , '$user_id')";
                             $db->query($sql);
 
                             $msg = "<h1>Success</h1>";
                             $msg .= "<h2>Congratulation</h2>";
                             $msg .= "<p>Yor account has been successfully created</p>";
-                            $msg .= "<a href = 'http://localhost/nce/verify.php'>Click here to verify your account</a>";
+                            $msg .= "<a href = 'http://localhost/nce/verify.php?token=$token'>Click here to verify your account</a>";
                             sendEmail($email, $first_name, "Account Verification", $msg);
 
                             header("Location:register_success.php");
@@ -229,7 +260,12 @@ include '../mail.php';
                                 <input type="password" name="password" class="form-control border border-1 mb-4" id="password" value="<?= @$password ?>" placeholder="Enter Password" required>
                                 <span class="text-danger"><?= @$message['password'] ?></span>
                             </div>
-                            
+                            <div class="form-group col-md-6">
+                                <label for="confirm_password">Confirm Password<span style = "color : red;"> * </span></label>
+                                <input type="password" name="confirm_password" class="form-control border border-1 mb-4" id="confirm_password" value="<?= @$confirm_password ?>" placeholder="Enter Confirm Password" required>
+                                <span class="text-danger"><?= @$message['confirm_password'] ?></span>
+                            </div>
+
                         </div>
 
                         <button class="btn form-control border-secondary py-3 bg-white text-primary " type="submit">Submit</button>

@@ -1,6 +1,7 @@
 <?php
 ob_start();
 include_once '../init.php';
+//checkUserType("employee");
 
 $link = "Employee Management";
 $breadcrumb_item = "Employee";
@@ -18,7 +19,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $address_line_1 = dataClean($address_line_1);
     $address_line_2 = dataClean($address_line_2);
     $city = dataClean($city);
-    $district = dataClean($district);
     $account_name = dataClean($account_name);
     $account_number = dataClean($account_number);
     $bank_name = dataClean($bank_name);
@@ -69,6 +69,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if (empty($civilStatus)) {
         $message['civilStatus'] = "Civil Status is required.";
     }
+
     if (empty($employeeStatus)) {
         $message['employeeStatus'] = "Employee Status is required.";
     }
@@ -76,23 +77,41 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if (empty($hire_date)) {
         $message['hire_date'] = "Hire Date is required.";
     }
-    
-     // File upload handling
+
+    // File upload handling
     $employee_image = '';
     if (isset($_FILES['employee_image'])) {
-        $uploadDir = '../assets/dist/img/uploads/employee/'; 
-        $uploadFile = $uploadDir . basename($_FILES['employee_image']['name']); 
+        $uploadDir = '../assets/dist/img/uploads/employee/';
+        $uploadFile = $uploadDir . basename($_FILES['employee_image']['name']);
         if (move_uploaded_file($_FILES['employee_image']['tmp_name'], $uploadFile)) {
-            $product_image = basename($_FILES['employee_image']['name']); 
-        } 
-    } 
+            $employee_image = basename($_FILES['employee_image']['name']);
+        }
+    }
 
+// check whether a valid nic 
+    if (!empty($nic_number)) {
+        $nicRegex = '/^[0-9]{9}[vVxX]$|^[0-9]{12}$/';
+        if (!preg_match($nicRegex, $nic_number)) {
+            $message['nic_number'] = "Invalid NIC No...! NIC No should be 9 numbers with 'V'/'X' (Old NIC) or 12 numbers (New NIC)";
+        }
+    }
+
+    // Validate mobile number
+    if (!empty($contact_mobile)) {
+        if (strlen($contact_mobile) != 9) {
+            $message['contact_mobile'] = "Contact Mobile Number must be exactly 9 digits and cannot start with zero..!";
+        } elseif ($contact_mobile[0] == '0') {
+            $message['contact_mobile'] = "Mobile number cannot start with zero..!";
+        }
+    }
 
     if (empty($message)) {
+        
+         $mobile_number = '+94' . $contact_mobile;
 
         $db = dbConn();
         $sql = "INSERT INTO employees(RegistrationNumber, FirstName, LastName, NICNumber, Email, ContactMobile, AlternateMobile, AddressLine1, AddressLine2, City, DistrictId, Image, DOB, Gender, HireDate, ResignDate, DesignationId, CivilStatusId, EmployeeStatusId, UserId, AccountName, AccountNumber, BankName, Branch) "
-                . "VALUES ('$registration_number','$first_name','$last_name','$nic_number','$email','$contact_mobile','$alt_mobile','$address_line_1','$address_line_2','$city','$district','$employee_image','$dob','$gender','$hire_date','resign_date', '$designation','$civilStatus','$employeeStatus','$user_id','$account_name','$account_number','$bank_name','$bank_branch')";
+                . "VALUES ('$registration_number','$first_name','$last_name','$nic_number','$email','$mobile_number','$alt_mobile','$address_line_1','$address_line_2','$city','$district','$employee_image','$dob','$gender','$hire_date','resign_date', '$designation','$civilStatus','$employeeStatus','$user_id','$account_name','$account_number','$bank_name','$bank_branch')";
         $db->query($sql);
         $EmployeeId = $db->insert_id;
 
@@ -144,7 +163,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             <label for="nic_number">NIC Number<span style = "color : red"> * </span></label>
                             <input type="text" name="nic_number" class="form-control border border-1 mb-1" id="nic_number" value="<?= @$nic_number ?>" placeholder="Enter NIC Number">
                             <span class="text-danger"><?= @$message['nic_number'] ?></span>
-
                         </div>
                         <div class="form-group col-md-3 mt-3 mt-md-0">
                             <label for="email">Email<span style = "color : red"> * </span></label>
@@ -190,8 +208,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             $sql = "SELECT * FROM  districts";
                             $result = $db->query($sql);
                             ?>
-                            <select name="district" id="district"  class="form-control mb-1" value="<?= @$district ?>" aria-label="Large select example">
-                                <option value="" >Select District</option>
+                            <select name="district" id="district"  class="form-control select2 mb-1" value="<?= @$district ?>" aria-label="Large select example">
+                                <option value="" disabled selected>Select District</option>
                                 <?php
                                 while ($row = $result->fetch_assoc()) {
                                     ?>
@@ -207,17 +225,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     <!--Employee Image , Designation, DOB and Gender-->
 
                     <div class="row">
-                      
-                            <div class="form-group col-md-3">
-                                <label for="employee_image">Employee Image</label>
-                                <div class="input-group">
-                                    <div class="custom-file">
-                                        <input type="file" name="employee_image" id="employee_image" value="<?= @$employee_image ?>" class="form-control">
-                                        <span class="text-danger"><?= @$message['employee_image'] ?></span>
-                                    </div>
+
+                        <div class="form-group col-md-3">
+                            <label for="employee_image">Employee Image</label>
+                            <div class="input-group">
+                                <div class="custom-file">
+                                    <input type="file" name="employee_image" id="employee_image" value="<?= @$employee_image ?>" class="form-control">
+                                    <span class="text-danger"><?= @$message['employee_image'] ?></span>
                                 </div>
                             </div>
-                       
+                        </div>
+
 
                         <div class="form-group col-md-3">
                             <label for="designation">Designation<span style = "color : red"> * </span></label>
@@ -227,7 +245,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             $result = $db->query($sql);
                             ?>
                             <select class="form-control mb-1" id="designation" name="designation" value="<?= @$designation ?>" aria-label="Large select example">
-                                <option value="">Select Designation</option>
+                                <option value="" disabled selected>Select Designation</option>
                                 <?php while ($row = $result->fetch_assoc()) { ?>
                                     <option value="<?= $row['DesignationId'] ?>" <?= @$designation == $row['DesignationId'] ? 'selected' : '' ?>><?= $row['DesignationName'] ?></option>
                                 <?php } ?>
@@ -254,9 +272,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                        class="form-check-input">
                                 <label for="radioFemale" class="form-check-label" id="labelFemale">Female</label>
                             </div>
-                             <br>
-                             <span class="text-danger"><?= @$message['gender'] ?></span>
-                            
+                            <br>
+                            <span class="text-danger"><?= @$message['gender'] ?></span>
+
                         </div>
                     </div>
 
@@ -272,7 +290,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             $result = $db->query($sql);
                             ?>
                             <select class="form-control mb-1" id="civilStatus" name="civilStatus" value="<?= @$civilStatus ?>" aria-label="Large select example">
-                                <option value="">Select Civil Status</option>
+                                <option value="" disabled selected>Select Civil Status</option>
                                 <?php
                                 while ($row = $result->fetch_assoc()) {
                                     ?>
@@ -290,7 +308,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             $result = $db->query($sql);
                             ?>
                             <select class="form-control mb-1" id="employeeStatus" name="employeeStatus" value="<?= @$employeeStatus ?>" aria-label="Large select example">
-                                <option value="">Select Employee Status</option>
+                                <option value="" disabled selected>Select Employee Status</option>
                                 <?php while ($row = $result->fetch_assoc()) { ?>
                                     <option value="<?= $row['EmployeeStatusId'] ?>" <?= @$employeeStatus == $row['EmployeeStatusId'] ? 'selected' : '' ?>><?= $row['EmployeeStatusName'] ?></option>
                                 <?php } ?>
@@ -300,12 +318,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                         <div class="form-group col-md-3">
                             <label for="hire_date">Hire Date<span style = "color : red;"> * </span></label>
-                            <input type="date" name="hire_date" class="form-control mb-1" id="hire_date" value="<?= @$hire_date ?>">
+                            <input type="date" name="hire_date" class="form-control mb-1" id="hire_date" value="<?= @$hire_date ?>" max="<?= date('Y-m-d'); ?>">
                             <span class="text-danger"><?= @$message['hire_date'] ?></span>
                         </div>
                         <div class="form-group col-md-3 mt-3 mt-md-0">
                             <label for="resign_date">Resign Date</label>
-                            <input type="date" name="resign_date" class="form-control mb-1" id="resign_date" value="<?= @$resign_date ?>">
+                            <input type="date" name="resign_date" class="form-control mb-1" id="resign_date" value="<?= @$resign_date ?>" max="<?= date('Y-m-d'); ?>">
                         </div>
                     </div>
 
@@ -345,7 +363,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 
                 <div class="card-footer">
-                    <button type="submit" class="btn cancel">Cancel</button>
+                     <a href="<?= SYS_URL ?>employees/manage.php" class="btn btn-secondary">Cancel</a>
                     <button type="submit" class="btn submit">Submit</button>
                 </div>
 
@@ -360,6 +378,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 
 <?php
-$content = ob_get_clean();
-include '../layouts.php';
+$content = ob_get_clean(); // Capture the output buffer content
+include '../layouts.php'; // Include the layout for the page
 ?>

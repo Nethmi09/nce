@@ -18,19 +18,19 @@
                     <a class="btn-link" href="contact.php">Contact Us</a>
                     <a class="btn-link" href="privacyPolicy.php">Privacy Policy</a>
                     <a class="btn-link" href="termsAndCond.php">Terms & Condition</a>
-                    <a class="btn-link" href="returnPolicy.php">Return Policy</a>
-                    <a class="btn-link" href="shippingPolicy.php">Delivery Policy</a>
+                    <a class="btn-link" href="deliveryPolicy.php">Delivery Policy</a>
 
                 </div>
             </div>
             <div class="col-lg-3 col-md-6">
                 <div class="d-flex flex-column text-start footer-item">
                     <h4 class="text-light mb-3">Informations</h4>
-                    <a class="btn-link" href="dashboard.php">User Dashboard</a>  
-                    <a class="btn-link" href="">My Account</a>                          
-                    <a class="btn-link" href="">Shopping Cart</a>
-                    <a class="btn-link" href="">Wishlist</a>
-                    <a class="btn-link" href="">Order History</a>
+                    <a class="btn-link" href="dashboard.php">User Dashboard</a>                
+                   <a class="btn-link" href="profile.php">My Account</a>
+                         
+                    <a class="btn-link" href="cart.php">Shopping Cart</a>
+                    <a class="btn-link" href="wishlist.php">Wishlist</a>
+                    <a class="btn-link" href="order_history.php">Order History</a>
 
                 </div>
             </div>
@@ -83,8 +83,31 @@
 <!-- Template Javascript -->
 <script src="assets/js/main.js"></script>
 
+<script>
+    
+    $('.brand-carousel').owlCarousel({
+        loop: true,
+        margin: 10,
+        autoplay: true,
+        responsive: {
+            0: {
+                items: 1
+            },
+            600: {
+                items: 3
+            },
+            1000: {
+                items: 5
+            }
+        }
+    });
 
+</script>
 
 </body>
 
 </html>
+
+<?php
+ob_end_flush();
+?>

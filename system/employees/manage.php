@@ -19,12 +19,15 @@ $breadcrumb_item_active = "Manage";
             <div class="card-body">
                 <?php
                 $db = dbConn();
-                $sql = "SELECT EmployeeId,RegistrationNumber, CONCAT(FirstName, ' ', LastName) AS EmployeeName, d.DesignationName, s.EmployeeStatusName, ContactMobile, HireDate FROM employees e INNER JOIN designations d ON d.DesignationId=e.DesignationId INNER JOIN employee_status s ON s.EmployeeStatusId=e.EmployeeStatusId";
+                $sql = "SELECT EmployeeId,RegistrationNumber, CONCAT(FirstName, ' ', LastName) AS EmployeeName, "
+                        . "d.DesignationName, s.EmployeeStatusName, ContactMobile, HireDate FROM employees e "
+                        . "INNER JOIN designations d ON d.DesignationId=e.DesignationId "
+                        . "INNER JOIN employee_status s ON s.EmployeeStatusId=e.EmployeeStatusId";
                 $result = $db->query($sql);
                 ?>
 
                 <!--Table Start-->
-                <table id="datatable" class="table table-bordered table-striped">
+                <table id="" class="table table-bordered table-striped">
                     <thead>
                         <tr>
                             <th>ID</th>
@@ -42,6 +45,7 @@ $breadcrumb_item_active = "Manage";
                         <?php
                         if ($result->num_rows > 0) {
                             while ($row = $result->fetch_assoc()) {
+                                $statusClass = $row['EmployeeStatusName'] === 'Working' ? 'text-success' : 'text-danger';
                                 ?>
                                 <tr>
                                     <td><?= $row['EmployeeId'] ?></td>
@@ -50,7 +54,7 @@ $breadcrumb_item_active = "Manage";
                                     <td><?= $row['ContactMobile'] ?></td> 
                                     <td><?= $row['DesignationName'] ?></td> 
                                     <td><?= $row['HireDate'] ?></td> 
-                                    <td><?= $row['EmployeeStatusName'] ?></td> 
+                                   <td class="<?= $statusClass ?>" style="font-weight: bold;"><?= $row['EmployeeStatusName'] ?></td> 
                                     <td>
                                         <a href="<?= SYS_URL ?>employees/view.php?employeeid=<?= $row['EmployeeId'] ?>" class="btn btn-info"><i class="fas fa-eye"></i></a>
                                         <a href="<?= SYS_URL ?>employees/edit.php?employeeid=<?= $row['EmployeeId'] ?>" class="btn btn-warning"><i class="fas fa-edit"></i></a>
@@ -73,6 +77,6 @@ $breadcrumb_item_active = "Manage";
 </div>
 
 <?php
-$content = ob_get_clean();
-include '../layouts.php';
+$content = ob_get_clean(); // Capture the output buffer content
+include '../layouts.php'; // Include the layout for the page
 ?>

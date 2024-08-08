@@ -1,6 +1,7 @@
 <?php
 session_start();
 include 'header.php';
+include '../config.php';
 if (!isset($_SESSION['USERID'])) {
     header("Location:login.php");
 }

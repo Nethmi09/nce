@@ -180,8 +180,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             $sql = "SELECT * FROM  districts";
                             $result = $db->query($sql);
                             ?>
-                            <select name="district" id="district"  class="form-control mb-1" value="<?= @$district ?>" aria-label="Large select example">
-                                <option value="" >Select District</option>
+                            <select name="district" id="district"  class="form-control select2 mb-1" value="<?= @$district ?>" aria-label="Large select example">
+                                <option value="" disabled selected>Select District</option>
                                 <?php
                                 while ($row = $result->fetch_assoc()) {
                                     ?>
@@ -230,7 +230,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 
                 <div class="card-footer">
-                    <button type="submit" class="btn cancel">Cancel</button>
+                    <a href="<?= SYS_URL ?>suppliers/manage.php" class="btn btn-secondary">Cancel</a>
                     <button type="submit" class="btn submit">Submit</button>
                 </div>
             </form>
@@ -247,6 +247,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 
 <?php
-$content = ob_get_clean();
-include '../layouts.php';
+$content = ob_get_clean(); // Capture the output buffer content
+include '../layouts.php'; // Include the layout for the page
 ?>

@@ -4,6 +4,7 @@ session_start();
 include 'header.php';
 include '../function.php';
 include '../mail.php';
+include '../config.php';
 ?> 
 
 <!-- Single Page Header start -->
@@ -13,13 +14,13 @@ include '../mail.php';
 <!-- Single Page Header End -->
 
 <!-- Mobile accessories products display and filtering options here -->
- <div class="container-fluid contact py-5">
-            <div class="container py-5">
-                <div class="p-5 bg-light rounded">
-                   
-                </div>
-            </div>
+<div class="container-fluid contact py-5">
+    <div class="container py-5">
+        <div class="p-5 bg-light rounded">
+
         </div>
+    </div>
+</div>
 <!-- End -->
 
 <?php

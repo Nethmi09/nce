@@ -114,6 +114,6 @@ $breadcrumb_item_active = "Manage";
     </div>
 </div>
 <?php
-$content = ob_get_clean();
-include '../layouts.php';
+$content = ob_get_clean(); // Capture the output buffer content
+include '../layouts.php'; // Include the layout for the page
 ?>

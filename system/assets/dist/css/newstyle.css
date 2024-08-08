@@ -41,6 +41,25 @@ button.submit:hover {
     border-radius: 0; /* Or any other specific styling for square shape */
 }
 
+/*Table Status Button Styles*/
+.btn-custom {
+    background-color: red;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    width: 200px;
+    height: 50px;
+}
+
+.btn-custom:disabled {
+    cursor: not-allowed;
+    opacity: 0.65;
+}
+
+
 
 
 

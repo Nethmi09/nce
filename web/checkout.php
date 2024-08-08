@@ -4,13 +4,14 @@ session_start();
 include 'header.php';
 include '../function.php';
 include '../mail.php';
+include '../config.php';
 
 if (!isset($_SESSION['USERID'])) {
     header("Location:login.php");
 }
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    
+
     extract($_POST);
     //Clean the form submitted data
     $personal_name = dataClean($personal_name);
@@ -55,6 +56,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $message['personal_district'] = "Billing District is required...!";
     }
 
+
     if (empty($shipping_name)) {
         $message['shipping_name'] = "Name is required...!";
     }
@@ -76,7 +78,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if (empty($shipping_district)) {
         $message['shipping_district'] = "Shipping District is required...!";
     }
-   
+
+    print_r($message);
 
     if (empty($message)) {
         $db = dbConn();
@@ -87,13 +90,32 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $row = $result->fetch_assoc();
         $customerid = $row['CustomerId'];
         $order_date = date('Y-m-d');
-        $order_number = date('Y') . date('m') . date('d') . $customerid;
+        $order_number = date('YmdHis');
 
-        $sql = "INSERT INTO orders(OrderNumber, OrderDate, CustomerId, PersonalName, PersonalEmail, PersonalContactMobile, PersonalAlternateMobile, PersonalAddressLine1, PersonalAddressLine2, PersonalCity, PersonalDistrictId, ShippingName, ShippingEmail, ShippingContactMobile, ShippingAlternateMobile, ShippingAddressLine1, ShippingAddressLine2, ShippingCity, ShippingDistrictId) "
-                . "VALUES ('$order_number','$order_date','$customerid','$personal_name','$personal_email','$personal_contact_mobile','$personal_alt_mobile','$personal_address_line_1','$personal_address_line_2','$personal_city','$personal_district','$shipping_name','$shipping_email','$shipping_contact_mobile','$shipping_alt_mobile','$shipping_address_line_1','$shipping_address_line_2','$shipping_city','$shipping_district')";
+        $grandTotal = $_SESSION['grand_total'];
+        $disCount = $_SESSION['discount'];
+        $netTOtal = $_SESSION['netTotal'];
+        $proFit = $_SESSION['profit'];
+        $quanTity = $_SESSION['quantity'];
+        $couponDiscount = $_SESSION['coupon'];
+        $netTotalAfterCouponDiscount = $_SESSION['netAfterCD'];
+        
+        
+        //add orders into order table
+        echo $sql = "INSERT INTO orders(OrderNumber, OrderDate, CustomerId, PersonalName, PersonalEmail, PersonalContactMobile,"
+        . " PersonalAlternateMobile, PersonalAddressLine1, PersonalAddressLine2, PersonalCity, PersonalDistrictId, ShippingName, "
+        . "ShippingEmail, ShippingContactMobile, ShippingAlternateMobile, ShippingAddressLine1, ShippingAddressLine2, "
+        . "ShippingCity, ShippingDistrictId, GrandTOTAL, Discount, NetTotal,CouponDiscount,NetTtAftCD, Quantity, OrderStatus, Profit) "
+        . "VALUES ('$order_number','$order_date','$customerid','$personal_name','$personal_email',"
+        . "'$personal_contact_mobile','$personal_alt_mobile','$personal_address_line_1','$personal_address_line_2',"
+        . "'$personal_city','$personal_district','$shipping_name','$shipping_email','$shipping_contact_mobile',"
+        . "'$shipping_alt_mobile','$shipping_address_line_1','$shipping_address_line_2','$shipping_city',"
+        . "'$shipping_district','$grandTotal','$disCount','$netTOtal','$couponDiscount','$netTotalAfterCouponDiscount','$quanTity','0','$proFit')";
         $db->query($sql);
 
         $OrderId = $db->insert_id;
+
+        $_SESSION['lastInsertId'] = $OrderId;
 
         $cart = $_SESSION['cart'];
 
@@ -102,10 +124,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $ProductID = $value['ProductId'];
             $UnitPrice = $value['UnitPrice'];
             $Quantity = $value['Quantity'];
-            $sql = "INSERT INTO order_products(OrderId, ProductId, StockId, UnitPrice, Quantity) VALUES ('$OrderId','$ProductID','$StockId','$UnitPrice','$Quantity')";
+            echo ' <br> ';
+            echo $sql = "INSERT INTO order_products(OrderId, ProductId, StockId, UnitPrice, Quantity) "
+            . "VALUES ('$OrderId','$ProductID','$StockId','$UnitPrice','$Quantity')";
             $db->query($sql);
         }
-        header("Location:order_success.php");
+        header("Location:processCheckoutPayment.php");
     }
 }
 ?>
@@ -129,8 +153,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $noproducts += $value['Quantity'];
             }
         }
-        echo "<a href='cart.php'>" . $total . "[" . $noproducts . "]" . "</a>";
         ?>
+
+
 
         <form action="<?= htmlspecialchars($_SERVER['PHP_SELF']); ?>" method="post" class="" novalidate>  <!--Submit to the same page (htmlspecialchars)-->
             <div class="row g-4">
@@ -140,36 +165,57 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         <h3 class="mb-4">Billing Details</h3>                   
                         <div class="mb-3">
                             <label for="personal_name">Name<span style="color: red;"> *</span></label>
+                            <?php
+                            $personal_name = $_SESSION['FIRSTNAME'] . " " . $_SESSION['LASTNAME'];
+                            ?>
                             <input type="text" name="personal_name" class="form-control border border-1 mb-4" id="personal_name" value="<?= @$personal_name ?>" placeholder="Enter Name" required>
                             <span class="text-danger"><?= @$message['personal_name'] ?></span>
                         </div>
                         <div class="mb-3">
                             <label for="personal_email">Email<span style="color: red;"> *</span></label>
+                            <?php
+                            $personal_email = $_SESSION['EMAIL'];
+                            ?>
                             <input type="email" name="personal_email" class="form-control border border-1 mb-4" id="personal_email" value="<?= @$personal_email ?>" placeholder="Enter Email" required>
                             <span class="text-danger"><?= @$message['personal_email'] ?></span>
                         </div>
                         <div class="mb-3">
                             <label for="personal_contact_mobile">Contact Mobile<span style="color: red;"> *</span></label>
+                            <?php
+                            $personal_contact_mobile = $_SESSION['CONTACTMOBILE'];
+                            ?>
                             <input type="text" name="personal_contact_mobile" class="form-control border border-1 mb-4" id="personal_contact_mobile" value="<?= @$personal_contact_mobile ?>" placeholder="Enter Contact Mobile" required>
                             <span class="text-danger"><?= @$message['personal_contact_mobile'] ?></span>
                         </div>
                         <div class="mb-3">
-                            <label for="personal_alt_mobile">Alternate Mobile</label>
+                            <label for="personal_alt_mobile">Alternate Mobile<span style="color: red;"> *</span></label>
+                            <?php
+                            $personal_alt_mobile = $_SESSION['ALTERNATEMOBILE'];
+                            ?>
                             <input type="text" name="personal_alt_mobile" class="form-control border border-1 mb-4" id="personal_alt_mobile" value="<?= @$personal_alt_mobile ?>" placeholder="Enter Alternate Mobile">
                             <span class="text-danger"><?= @$message['personal_alt_mobile'] ?></span>
                         </div>
                         <div class="mb-3">
                             <label for="personal_address_line_1">Address Line 1<span style="color: red;"> *</span></label>
+                            <?php
+                            $personal_address_line_1 = $_SESSION['ADDRESSLINE1'];
+                            ?>
                             <input type="text" name="personal_address_line_1" class="form-control border border-1 mb-4" id="personal_address_line_1" value="<?= @$personal_address_line_1 ?>" placeholder="Enter Address Line 1" required>
                             <span class="text-danger"><?= @$message['personal_address_line_1'] ?></span>
                         </div>
                         <div class="mb-3">
                             <label for="personal_address_line_2">Address Line 2</label>
+                            <?php
+                            $personal_address_line_2 = $_SESSION['ADDRESSLINE2'];
+                            ?>
                             <input type="text" name="personal_address_line_2" class="form-control border border-1 mb-4" id="personal_address_line_2" value="<?= @$personal_address_line_2 ?>" placeholder="Enter Address Line 2">
                             <span class="text-danger"><?= @$message['personal_address_line_2'] ?></span>
                         </div>
                         <div class="mb-3">
                             <label for="personal_city">City<span style="color: red;"> *</span></label>
+                            <?php
+                            $personal_city = $_SESSION['CITY'];
+                            ?>
                             <input type="text" name="personal_city" class="form-control border border-1 mb-4" id="personal_city" value="<?= @$personal_city ?>" placeholder="Enter City" required>
                             <span class="text-danger"><?= @$message['personal_city'] ?></span>
                         </div>
@@ -180,22 +226,29 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             $result = $db->query($sql);
                             ?>
                             <label for="personal_district">Billing District<span style = "color : red;"> * </span></label>
+                            <?php
+                            $personal_district = $_SESSION['DISTRICT'];
+                            ?>
                             <select name="personal_district" id="personal_district"  class="form-select mb-4 border border-1" value="<?= @$personal_district ?>" aria-label="Large select example">
                                 <option value="" >Select District</option>
                                 <?php
                                 while ($row = $result->fetch_assoc()) {
                                     ?>
-                                    <option value="<?= $row['Id'] ?>"><?= $row['Name'] ?></option>
+                                    <option value="<?= $row['Id'] ?>" <?= $row['Id'] == $personal_district ? 'selected' : '' ?>><?= $row['Name'] ?></option>
                                     <?php
                                 }
                                 ?>
                             </select>
                             <span class="text-danger"><?= @$message['personal_district'] ?></span>
                         </div>
+
+
                         <div class="form-check mb-4">
                             <input class="form-check-input" type="checkbox" id="same_as_personal" name="same_as_personal">
                             <label class="form-check-label fw-bold text-primary" for="same_as_personal">Shipping details are the same as billing details</label>
                         </div>
+
+
                     </div>
                 </div>
                 <!-- Billing Details Card End -->
@@ -220,7 +273,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             <span class="text-danger"><?= @$message['shipping_contact_mobile'] ?></span>
                         </div>
                         <div class="mb-3">
-                            <label for="shipping_alt_mobile">Alternate Mobile</label>
+                            <label for="shipping_alt_mobile">Alternate Mobile<span style="color: red;"> *</span></label>
                             <input type="text" name="shipping_alt_mobile" class="form-control border border-1 mb-4" id="shipping_alt_mobile" value="<?= @$shipping_alt_mobile ?>" placeholder="Enter Alternate Mobile">
                             <span class="text-danger"><?= @$message['shipping_alt_mobile'] ?></span>
                         </div>
@@ -264,7 +317,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             </div>
             <!-- Place Holder Button Start -->
             <div class="text-center mt-4">
-                <button class="btn btn-primary form-control border-secondary py-3 bg-white text-primary" type="submit">Place Order</button>
+                <button class="btn btn-primary form-control border-secondary py-3 bg-white text-primary" type="submit">Proceed Checkout</button>
             </div>
             <!-- Place Holder Button End -->
         </form>

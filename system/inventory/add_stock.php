@@ -10,7 +10,7 @@ $breadcrumb_item_active = "Add Stock";
 <div class="row">
     <div class="col-12">
 
-        <a href="<?= SYS_URL ?>inventory/manage.php" class="btn btn-dark mb-4">View Stock Table</a>
+        <a href="<?= SYS_URL ?>inventory/manage.php" class="btn btn-dark mb-4"><i class="fas fa-arrow-left"></i> Back to stock List</a>
 
         <!--Card Start-->
 
@@ -112,7 +112,7 @@ $breadcrumb_item_active = "Add Stock";
                             <tr class="products-row">
                                 <td>
                                     <select name="ProductId[]" id="ProductId" value="<?= @$ProductId ?>"class="form-control" >
-                                        <option value="">Select Product</option>
+                                        <option value="" disabled selected>Select Product</option>
                                         <?php
                                         $db = dbConn();
                                         $sql = "SELECT ProductId, ProductName FROM Products";
@@ -152,7 +152,7 @@ $breadcrumb_item_active = "Add Stock";
                 </div>
 
                 <div class="card-footer">
-                    <button type="submit" class="btn cancel">Cancel</button>
+                     <a href="<?= SYS_URL ?>inventory/manage.php" class="btn btn-secondary">Cancel</a>
                     <button type="submit" class="btn submit">Submit</button>
                 </div>
 
@@ -167,8 +167,8 @@ $breadcrumb_item_active = "Add Stock";
 </div>
 
 <?php
-$content = ob_get_clean();
-include '../layouts.php';
+$content = ob_get_clean(); // Capture the output buffer content
+include '../layouts.php'; // Include the layout for the page
 ?>
 
 <script>

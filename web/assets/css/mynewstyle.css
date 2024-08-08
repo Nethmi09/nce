@@ -38,10 +38,47 @@
     color: white;
 }
 
-  .rounded-border {
-        border: 1px solid #ccc;
-        border-radius: 15px;
-        padding: 15px;
-        background-color: #f9f9f9;
-    }
+.rounded-border {
+    border: 1px solid #ccc;
+    border-radius: 15px;
+    padding: 15px;
+    background-color: #f9f9f9;
+}
+
+/*carousel styles start*/
+.section-padding{
+    padding:60px 60px;
+}
+.brand-carousel {
+    background: aliceblue;
+}
+.owl-dots {
+    text-align: center;
+    margin-top: 4%;
+}
+.owl-dot {
+    display: inline-block;
+    height: 15px !important;
+    width: 15px !important;
+    background-color: #878787 !important;
+    opacity: 0.8;
+    border-radius: 50%;
+    margin: 0 5px;
+}
+.owl-dot.active {
+    background-color: #000 !important;
+}
+
+.single-logo {
+    max-width: 60% !important;
+    height: auto !important;
+}
+
+.banner-image{
+    width: 100% !important;
+    height: auto !important;
+}
+
+/*carousel styles end*/
+
 
