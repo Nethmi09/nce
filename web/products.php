@@ -82,14 +82,7 @@ include '../config.php';
         <h1 class="mb-4">Shop All</h1>
         <div class="row g-4">
             <div class="col-lg-12">
-                <div class="row g-4">
-                    <div class="col-xl-3">
-                        <div class="input-group w-100 mx-auto d-flex">
-                            <input type="search" class="form-control p-3" placeholder="Search products" aria-describedby="search-icon-1">
-                            <span id="search-icon-1" class="input-group-text p-3"><i class="fa fa-search"></i></span>
-                        </div>
-                    </div>                                           
-                </div>
+               
                 <div class="row g-4">
                     <div class="col-lg-3">
                         <div class="row g-4">
@@ -98,119 +91,93 @@ include '../config.php';
                                 <div class="mb-3">
                                     <h4> Filter By Main Category</h4>
 
-                                    <?php
-                                    $db = dbConn();
-                                    $sql = "SELECT * FROM main_categories";
-                                    $result = $db->query($sql);
-                                    ?>
-                                    <form method="post" action="">
+                                    <ul>
                                         <?php
+                                        $db = dbConn();
+                                        $sql = "SELECT * FROM main_categories WHERE Status = '1'";
+                                        $result = $db->query($sql);
+
                                         while ($row = $result->fetch_assoc()) {
                                             ?>
-                                            <div class="form-check">
-                                                <input class="form-check-input" type="checkbox" name="mainCategories[]" value="<?= $row['MainCategoryId'] ?>" id="mainCategory<?= $row['MainCategoryId'] ?>">
-                                                <label class="form-check-label" for="mainCategory<?= $row['MainCategoryId'] ?>">
-                                                    <?= $row['MainCategoryName'] ?>
-                                                </label>
-                                            </div>
+                                            <li><a href="#" onclick="loadProductsByMainCategory(<?= $row['MainCategoryId'] ?>)"><?= $row['MainCategoryName'] ?></a></li>
                                             <?php
                                         }
                                         ?>
-                                    </form>
+                                        <li><a href="#" onclick="loadProductsByMainCategory('0')">All</a></li>
+                                    </ul>
                                 </div>
 
                                 <br>
                                 <div class="mb-3">
                                     <h4>Filter By Sub Category</h4>
-
-                                    <?php
-                                    $db = dbConn();
-                                    $sql = "SELECT * FROM categories";
-                                    $result = $db->query($sql);
-                                    ?>
-                                    <form method="post" action="">
+                                    <ul>
                                         <?php
+                                        $db = dbConn();
+                                        $sql = "SELECT * FROM categories WHERE Statuss = '1'";
+                                        $result = $db->query($sql);
+
                                         while ($row = $result->fetch_assoc()) {
                                             ?>
-                                            <div class="form-check">
-                                                <input class="form-check-input" type="checkbox" name="categories[]" value="<?= $row['CategoryId'] ?>" id="category<?= $row['CategoryId'] ?>">
-                                                <label class="form-check-label" for="category<?= $row['CategoryId'] ?>">
-                                                    <?= $row['CategoryName'] ?>
-                                                </label>
-                                            </div>
+                                            <li><a href="#" onclick="loadProductsByCategory(<?= $row['CategoryId'] ?>)"><?= $row['CategoryName'] ?></a></li>
                                             <?php
                                         }
                                         ?>
-                                    </form>
+                                        <li><a href="#" onclick="loadProductsByCategory('0')">All</a></li>
+                                    </ul>
+                                    
                                 </div>
 
                                 <br>
                                 <div class="mb-3">
                                     <h4>Filter By Brands</h4>
-
-                                    <?php
-                                    $db = dbConn();
-                                    $sql = "SELECT * FROM brands";
-                                    $result = $db->query($sql);
-                                    ?>
-                                    <form method="post" action="">
+                                     <ul>
                                         <?php
+                                        $db = dbConn();
+                                        $sql = "SELECT * FROM brands WHERE BStatus = '1'";
+                                        $result = $db->query($sql);
+
                                         while ($row = $result->fetch_assoc()) {
                                             ?>
-                                            <div class="form-check">
-                                                <input class="form-check-input" type="checkbox" name="brands[]" value="<?= $row['BrandId'] ?>" id="brand<?= $row['BrandId'] ?>">
-                                                <label class="form-check-label" for="brand<?= $row['BrandId'] ?>">
-                                                    <?= $row['BrandName'] ?>
-                                                </label>
-                                            </div>
+                                            <li><a href="#" onclick="loadProductsByBrand(<?= $row['BrandId'] ?>)"><?= $row['BrandName'] ?></a></li>
                                             <?php
                                         }
                                         ?>
-                                    </form>
+                                        <li><a href="#" onclick="loadProductsByBrand('0')">All</a></li>
+                                    </ul>
+
                                 </div>
 
                                 <br>
                                 <div class="mb-3">
                                     <h4>Filter By Colors</h4>
-
-                                    <?php
-                                    $db = dbConn();
-                                    $sql = "SELECT * FROM colors";
-                                    $result = $db->query($sql);
-                                    ?>
-                                    <form method="post" action="">
+                                     <ul>
                                         <?php
+                                        $db = dbConn();
+                                        $sql = "SELECT * FROM colors WHERE Status = '1'";
+                                        $result = $db->query($sql);
+
                                         while ($row = $result->fetch_assoc()) {
                                             ?>
-                                            <div class="form-check">
-                                                <input class="form-check-input" type="checkbox" name="colors[]" value="<?= $row['ColorId'] ?>" id="color<?= $row['ColorId'] ?>">
-                                                <label class="form-check-label" for="category<?= $row['ColorId'] ?>">
-                                                    <?= $row['ColorName'] ?>
-                                                </label>
-                                            </div>
+                                            <li><a href="#" onclick="loadProductsByColor(<?= $row['ColorId'] ?>)"><?= $row['ColorName'] ?></a></li>
                                             <?php
                                         }
                                         ?>
-                                    </form>
+                                        <li><a href="#" onclick="loadProductsByColor('0')">All</a></li>
+                                    </ul>
+
                                 </div>
 
-                            </div>
-                            <div class="col-lg-12">
-                                <div class="mb-3">
-                                    <h4 class="mb-2">Filter By Price</h4>
-                                    <input type="range" class="form-range w-100" id="rangeInput" name="rangeInput" min="0" max="200000" value="0" oninput="amount.value=rangeInput.value">
-                                    <output id="amount" name="amount" min-velue="0" max-value="500" for="rangeInput">0</output>
-                                </div>
                             </div>
 
                         </div>
                     </div>
 
                     <div class="col-lg-9">
-                        <div class="row g-4 justify-content-center">
+                        <div class="row g-4 justify-content-center" id="product_grid">
                             <?php
                             $db = dbConn();
-                            $sql = "SELECT product_stocks.StockId, products.ProductName, products.ProductImage, product_stocks.Quantity, product_stocks.UnitPrice, product_stocks.IssuedQuantity, categories.CategoryName 
+                            $sql = "SELECT product_stocks.StockId, products.ProductName, products.ProductImage, 
+                                product_stocks.Quantity, product_stocks.UnitPrice, product_stocks.IssuedQuantity, categories.CategoryName 
                                     FROM product_stocks 
                                     INNER JOIN products ON (products.ProductId = product_stocks.ProductId) 
                                     INNER JOIN categories ON (categories.CategoryId = products.CategoryId) 
@@ -250,18 +217,6 @@ include '../config.php';
                             }
                             ?>
 
-                            <div class="col-12">
-                                <div class="pagination d-flex justify-content-center mt-5">
-                                    <a href="#" class="rounded">&laquo;</a>
-                                    <a href="#" class="active rounded">1</a>
-                                    <a href="#" class="rounded">2</a>
-                                    <a href="#" class="rounded">3</a>
-                                    <a href="#" class="rounded">4</a>
-                                    <a href="#" class="rounded">5</a>
-                                    <a href="#" class="rounded">6</a>
-                                    <a href="#" class="rounded">&raquo;</a>
-                                </div>
-                            </div>
                         </div>
                     </div>
                 </div>
@@ -275,3 +230,88 @@ include '../config.php';
 include 'footer.php';
 ob_end_flush();
 ?> 
+
+<!--Load Products By Main Category-->
+<script>
+
+    function loadProductsByMainCategory(maincategoryId) {
+
+        if (maincategoryId) {
+
+            $.ajax({
+                url: 'loadProductsByMainCategory.php?maincategoryId=' + maincategoryId,
+                type: 'GET',
+                success: function (data) {
+                    $("#product_grid").html(data);
+                },
+                error: function (xhr, status, error) {
+                    console.error('AJAX Error:', status, error);
+                }
+            });
+        }
+    }
+</script>
+
+<!--Load Products By Category-->
+<script>
+
+    function loadProductsByCategory(categoryId) {
+
+        if (categoryId) {
+
+            $.ajax({
+                url: 'loadProductsByCategory.php?categoryId=' + categoryId,
+                type: 'GET',
+                success: function (data) {
+                    $("#product_grid").html(data);
+                },
+                error: function (xhr, status, error) {
+                    console.error('AJAX Error:', status, error);
+                }
+            });
+        }
+    }
+</script>
+
+
+<!--Load Products By Brand-->
+<script>
+
+    function loadProductsByBrand(brandId) {
+
+        if (brandId) {
+
+            $.ajax({
+                url: 'loadProductsByBrand.php?brandId=' + brandId,
+                type: 'GET',
+                success: function (data) {
+                    $("#product_grid").html(data);
+                },
+                error: function (xhr, status, error) {
+                    console.error('AJAX Error:', status, error);
+                }
+            });
+        }
+    }
+</script>
+
+<!--Load Products By Color-->
+<script>
+
+    function loadProductsByColor(colorId) {
+
+        if (colorId) {
+
+            $.ajax({
+                url: 'loadProductsByColor.php?colorId=' + colorId,
+                type: 'GET',
+                success: function (data) {
+                    $("#product_grid").html(data);
+                },
+                error: function (xhr, status, error) {
+                    console.error('AJAX Error:', status, error);
+                }
+            });
+        }
+    }
+</script>

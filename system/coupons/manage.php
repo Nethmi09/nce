@@ -21,6 +21,8 @@ if ($_SERVER['REQUEST_METHOD'] == "POST" && @$action == 'update') {
 
 <div class="row">
     <div class="col-12">
+         <a href="<?= SYS_URL ?>products/productManage.php" class="btn btn-dark mb-4"><i class="fas fa-arrow-left"></i> Back to Products Listing Table</a>
+         <br>
         <a href="<?= SYS_URL ?>coupons/add.php" class="btn btn-dark mb-4"><i class="fas fa-plus-circle"></i> Add New Coupon</a>
         <div class="card mt">
             <div class="card-header">
@@ -31,7 +33,7 @@ if ($_SERVER['REQUEST_METHOD'] == "POST" && @$action == 'update') {
                 <!--Get coupon data from coupons table-->
                 <?php
                 $db = dbConn();
-                $sql = "SELECT CouponId, CouponNumber, Discount, AddedDate, ExpireDate, Status FROM coupons";
+                $sql = "SELECT * FROM coupons";
                 $result = $db->query($sql);
                 ?>
 
@@ -42,8 +44,7 @@ if ($_SERVER['REQUEST_METHOD'] == "POST" && @$action == 'update') {
                             <th>Coupon ID</th>
                             <th>Coupon Number</th>  
                             <th>Discount</th>  
-                            <th>Added Date</th>  
-                            <th>Expire Date</th>  
+                            <th>Order Count</th>                           
                             <th>Status</th> 
                             <th>Set Activation Status</th> 
                             <th>Actions</th>
@@ -58,8 +59,7 @@ if ($_SERVER['REQUEST_METHOD'] == "POST" && @$action == 'update') {
                                     <td><?= $row['CouponId'] ?></td>
                                     <td><?= $row['CouponNumber'] ?></td> 
                                     <td><?= $row['Discount'] ?></td>
-                                    <td><?= $row['AddedDate'] ?></td>
-                                    <td><?= $row['ExpireDate'] ?></td>
+                                    <td><?= $row['order_count'] ?></td>
                                     <td>
                                         <?php
                                         // Displays the status of a coupon with styled badges (Active/Inactive).
@@ -113,7 +113,7 @@ if ($_SERVER['REQUEST_METHOD'] == "POST" && @$action == 'update') {
                                         <a href="<?= SYS_URL ?>coupons/view.php?couponid=<?= $row['CouponId'] ?>" class="btn btn-info"><i class="fas fa-eye"></i></a>
                                         <a href="<?= SYS_URL ?>coupons/edit.php?couponid=<?= $row['CouponId'] ?>" class="btn btn-warning"><i class="fas fa-edit"></i></a>
                                         <!-- Calls the confirmDelete() function to confirm the deletion of a coupon when the button is clicked -->
-                                        <a href="<?= SYS_URL ?>coupons/delete.php?couponid=<?= $row['CouponId'] ?>" class="btn btn-danger" onclick="return confirmDelete()"><i class="fas fa-trash"></i></a>
+<!--                                        <a href="<?= SYS_URL ?>coupons/delete.php?couponid=<?= $row['CouponId'] ?>" class="btn btn-danger" onclick="return confirmDelete()"><i class="fas fa-trash"></i></a>-->
                                     </td>
                                 </tr>
 

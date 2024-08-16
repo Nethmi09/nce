@@ -5,23 +5,31 @@ include_once '../init.php';
 $link = "User Management";
 $breadcrumb_item = "User";
 $breadcrumb_item_active = "Manage";
-?>
 
-<?php
 extract($_POST);
-if ($_SERVER['REQUEST_METHOD'] == "POST" && @$action == 'update') {
-    extract($_POST);
-    $db = dbConn();
-    $sql = "UPDATE users SET Status= '$UpdateStatus' where UserId='$UserId'";
 
+if ($_SERVER['REQUEST_METHOD'] == "POST" && @$action == 'update') {
+    $db = dbConn();
+
+    // Check if the user trying to deactivate is an admin (UserRoleId = 1)
+    $sql = "SELECT UserRoleId FROM users WHERE UserId='$UserId'";
     $result = $db->query($sql);
+    $row = $result->fetch_assoc();
+
+    if ($row['UserRoleId'] != 1) {
+        // Proceed with the update if the user is not an admin
+        $sql = "UPDATE users SET Status= '$UpdateStatus' WHERE UserId='$UserId'";
+        $db->query($sql);
+    } else {
+        // Admin user, do not deactivate
+        echo "<script>alert('Admin user cannot be deactivated.');</script>";
+    }
 }
 ?>
 
 <div class="row">
     <div class="col-12">
         <?php
-        // Ensure privilege is correctly checked
         $privilege = checkprivilege(1);
         ?>
         <a href="<?= SYS_URL ?>users/userAdd.php" class="btn btn-dark mb-4 <?= $privilege['Add'] == '0' ? 'disabled' : '' ?>">
@@ -35,7 +43,7 @@ if ($_SERVER['REQUEST_METHOD'] == "POST" && @$action == 'update') {
             <div class="card-body">
                 <?php
                 $db = dbConn();
-                $sql = "SELECT u.UserId, u.FirstName, u.LastName, u.UserName, u.UserType, u.Status, r.Role 
+                $sql = "SELECT u.UserId, u.FirstName, u.LastName, u.UserName, u.UserRoleId, u.UserType, u.Status, r.Role 
                         FROM users u 
                         LEFT JOIN user_role r ON r.Id = u.UserRoleId 
                         WHERE u.UserRoleId IN (1, 2, 3, 4)";
@@ -45,7 +53,7 @@ if ($_SERVER['REQUEST_METHOD'] == "POST" && @$action == 'update') {
                 <table id="" class="table table-bordered table-striped">
                     <thead>
                         <tr>
-                            <th>ID</th>
+                            <th>#</th>
                             <th>Employee Name</th>
                             <th>User Name</th>
                             <th>Role Name</th>
@@ -57,10 +65,11 @@ if ($_SERVER['REQUEST_METHOD'] == "POST" && @$action == 'update') {
                     <tbody>
                         <?php
                         if ($result->num_rows > 0) {
+                            $i = 1;
                             while ($row = $result->fetch_assoc()) {
                                 ?>
                                 <tr>
-                                    <td><?= htmlspecialchars($row['UserId']) ?></td>
+                                    <td><?= $i ?></td>
                                     <td><?= htmlspecialchars($row['FirstName'] . ' ' . $row['LastName']) ?></td>
                                     <td><?= htmlspecialchars($row['UserName']) ?></td>
                                     <td><?= htmlspecialchars($row['Role']) ?></td>
@@ -72,32 +81,38 @@ if ($_SERVER['REQUEST_METHOD'] == "POST" && @$action == 'update') {
                                             <h5><span class="badge badge-pill" style="background-color: green; color: white; padding: 10px 20px; border-radius: 25px; display: inline-block; text-align: center;">
                                                     Active
                                                 </span></h5>
-                                        <?php } elseif ($status == 0) {
-                                            ?>
+                                        <?php } elseif ($status == 0) { ?>
                                             <h5><span class="badge badge-pill" style="background-color: red; color: white; padding: 10px 20px; border-radius: 25px; display: inline-block; text-align: center;">
                                                     Deactive
                                                 </span></h5>
-                                        <?php }
-                                        ?>
+                                        <?php } ?>
                                     </td>
-
 
                                     <td>
                                         <?php
                                         $status = $row['Status'];
                                         if ($status == 1) {
-                                            // Status is active, so show deactivate button
-                                            ?>
-                                            <form action="<?= htmlspecialchars($_SERVER['PHP_SELF']); ?>" method="post">
-                                                <input type="hidden" name="UserId" value="<?= $row['UserId'] ?>">
-                                                <input type="hidden" name="UpdateStatus" value="0">
-                                                <button type="submit" name="action" value="update" class="btn btn-danger" style="width: 200px; height: 50px;">
+                                            if ($row['UserRoleId'] == 1) {
+                                                // If the user is an admin (UserRoleId = 1), disable the deactivate button
+                                                ?>
+                                                <button type="button" class="btn btn-danger" style="width: 200px; height: 50px;" disabled>
                                                     Click to Deactivate
                                                 </button>
-                                            </form>
-                                            <?php
+                                                <?php
+                                            } else {
+                                                // For non-admin users, display the deactivate button
+                                                ?>
+                                                <form action="<?= htmlspecialchars($_SERVER['PHP_SELF']); ?>" method="post">
+                                                    <input type="hidden" name="UserId" value="<?= $row['UserId'] ?>">
+                                                    <input type="hidden" name="UpdateStatus" value="0">
+                                                    <button type="submit" name="action" value="update" class="btn btn-danger" style="width: 200px; height: 50px;">
+                                                        Click to Deactivate
+                                                    </button>
+                                                </form>
+                                                <?php
+                                            }
                                         } elseif ($status == 0) {
-                                            // Status is inactive, so show activate button
+                                            // Status is inactive, show the activate button
                                             ?>
                                             <form action="<?= htmlspecialchars($_SERVER['PHP_SELF']); ?>" method="post">
                                                 <input type="hidden" name="UserId" value="<?= $row['UserId'] ?>">
@@ -114,15 +129,10 @@ if ($_SERVER['REQUEST_METHOD'] == "POST" && @$action == 'update') {
                                     <td>
                                         <a href="<?= SYS_URL ?>users/userView.php?userid=<?= htmlspecialchars($row['UserId']) ?>" class="btn btn-info <?= $privilege['View'] == '0' ? 'disabled' : '' ?>"><i class="fas fa-eye"></i></a>
                                         <a href="<?= SYS_URL ?>users/userEdit.php?userid=<?= htmlspecialchars($row['UserId']) ?>" class="btn btn-warning <?= $privilege['Update'] == '0' ? 'disabled' : '' ?>"><i class="fas fa-edit"></i></a>
-                                        <?php if ($row['UserType'] != 'admin') { ?>
-                                            <a href="<?= SYS_URL ?>users/userDelete.php?userid=<?= htmlspecialchars($row['UserId']) ?>" class="btn btn-danger <?= $privilege['Delete'] == '0' ? 'disabled' : '' ?>" onclick="return confirmDelete()"><i class="fas fa-trash"></i></a>
-                                        <?php } ?>
-                                        <?php if ($row['UserType'] == 'admin') { ?>
-                                            <div><small class="text-muted">Can not delete admin user</small></div>
-                                        <?php } ?>
                                     </td>
                                 </tr>
                                 <?php
+                                $i++;
                             }
                         }
                         ?>
@@ -133,6 +143,7 @@ if ($_SERVER['REQUEST_METHOD'] == "POST" && @$action == 'update') {
         </div>
     </div>
 </div>
+
 <?php
 $content = ob_get_clean(); // Capture the output buffer content
 include '../layouts.php'; // Include the layout for the page

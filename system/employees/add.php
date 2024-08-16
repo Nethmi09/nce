@@ -9,7 +9,6 @@ $breadcrumb_item_active = "Add";
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     extract($_POST);
-    $registration_number = dataClean($registration_number);
     $first_name = dataClean($first_name);
     $last_name = dataClean($last_name);
     $nic_number = dataClean($nic_number);
@@ -78,11 +77,25 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $message['hire_date'] = "Hire Date is required.";
     }
 
+
     // File upload handling
     $employee_image = '';
-    if (isset($_FILES['employee_image'])) {
+    if (!empty($_FILES['employee_image']['name'])) {
         $uploadDir = '../assets/dist/img/uploads/employee/';
         $uploadFile = $uploadDir . basename($_FILES['employee_image']['name']);
+
+        // Check if file type is an image
+        $imageFileType = strtolower(pathinfo($uploadFile, PATHINFO_EXTENSION));
+        $allowedExtensions = array("jpg", "jpeg", "png");
+        if (!in_array($imageFileType, $allowedExtensions)) {
+            $message['employee_image'] = "Sorry, only JPG, JPEG & PNG files are allowed.";
+        }
+
+        // Check file size
+        if ($_FILES['employee_image']['size'] > 5000000) { // 5 MB (you can adjust this limit)
+            $message['employee_image'] = "Sorry, your file is too large.";
+        }
+        // Check if file was uploaded without errors
         if (move_uploaded_file($_FILES['employee_image']['tmp_name'], $uploadFile)) {
             $employee_image = basename($_FILES['employee_image']['name']);
         }
@@ -110,8 +123,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
          $mobile_number = '+94' . $contact_mobile;
 
         $db = dbConn();
-        $sql = "INSERT INTO employees(RegistrationNumber, FirstName, LastName, NICNumber, Email, ContactMobile, AlternateMobile, AddressLine1, AddressLine2, City, DistrictId, Image, DOB, Gender, HireDate, ResignDate, DesignationId, CivilStatusId, EmployeeStatusId, UserId, AccountName, AccountNumber, BankName, Branch) "
-                . "VALUES ('$registration_number','$first_name','$last_name','$nic_number','$email','$mobile_number','$alt_mobile','$address_line_1','$address_line_2','$city','$district','$employee_image','$dob','$gender','$hire_date','resign_date', '$designation','$civilStatus','$employeeStatus','$user_id','$account_name','$account_number','$bank_name','$bank_branch')";
+        $sql = "INSERT INTO employees(FirstName, LastName, NICNumber, Email, ContactMobile, AlternateMobile, AddressLine1, AddressLine2, City, DistrictId, Image, DOB, Gender, HireDate, DesignationId, CivilStatusId, EmployeeStatusId, UserId, AccountName, AccountNumber, BankName, Branch) "
+                . "VALUES ('$first_name','$last_name','$nic_number','$email','$mobile_number','$alt_mobile','$address_line_1','$address_line_2','$city','$district','$employee_image','$dob','$gender','$hire_date','$designation','$civilStatus','$employeeStatus',null,'$account_name','$account_number','$bank_name','$bank_branch')";
+        
         $db->query($sql);
         $EmployeeId = $db->insert_id;
 
@@ -135,21 +149,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             <form action="<?= htmlspecialchars($_SERVER['PHP_SELF']); ?>" method="post" enctype="multipart/form-data">
                 <div class="card-body">
 
-                    <!--Employee Registration Number, Employee First Name and Employee Last Name-->
+                    <!--Employee First Name and Employee Last Name-->
 
                     <div class="row">
-                        <div class="form-group col-md-4">
-                            <label for="registration_number" class="form-label fw-bold">Registration Number<span style = "color: red"> * </span></label>
-                            <input type="text" name="registration_number" class="form-control border border-1 mb-1" id="registration_number" value="<?= @$registration_number ?>" placeholder="Enter Registration Number">
-                            <span class="text-danger"><?= @$message['registration_number'] ?></span>
-                        </div>
-                        <div class="form-group col-md-4">
+                        <div class="form-group col-md-6">
                             <label for="first_name">First Name<span style = "color : red"> * </span></label>
                             <input type="text" name="first_name" class="form-control border border-1 mb-1" id="first_name" value="<?= @$first_name ?>" placeholder="Enter First Name">
                             <span class="text-danger"><?= @$message['first_name'] ?></span>
 
                         </div>
-                        <div class="form-group col-md-4 mt-3 mt-md-0">
+                        <div class="form-group col-md-6 mt-3 mt-md-0">
                             <label for="last_name">Last Name<span style = "color : red"> * </span></label>
                             <input type="text" name="last_name" class="form-control border border-1 mb-1" id="last_name" value="<?= @$last_name ?>" placeholder="Enter Last Name">
                             <span class="text-danger"><?= @$message['last_name'] ?></span>
@@ -235,6 +244,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                 </div>
                             </div>
                         </div>
+                        
+                        
 
 
                         <div class="form-group col-md-3">
@@ -255,7 +266,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                         <div class="form-group col-md-3">
                             <label for="dob">DOB<span style = "color : red;"> * </span></label>
-                            <input type="date" name="dob" class="form-control mb-1" id="dob" value="<?= @$dob ?>">
+                            <input type="date" name="dob" class="form-control mb-1" id="dob" value="<?= @$dob ?>" max="<?= date('Y-m-d'); ?>">
                             <span class="text-danger"><?= @$message['dob'] ?></span>
                         </div>
 
@@ -278,11 +289,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         </div>
                     </div>
 
-                    <!--Employee Civil Status , Employee Status, Hire Date and Resign Date-->
+                    <!--Employee Civil Status , Employee Status, Hire Date-->
 
                     <div class="row">
 
-                        <div class="form-group col-md-3">
+                        <div class="form-group col-md-4">
                             <label for="civilStatus">Civil Status<span style = "color : red"> * </span></label>
                             <?php
                             $db = dbConn();
@@ -300,7 +311,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             <span class="text-danger"><?= @$message['civilStatus'] ?></span>
                         </div>
 
-                        <div class="form-group col-md-3">
+                        <div class="form-group col-md-4">
                             <label for="employeeStatus">Employee Status<span style = "color : red"> * </span></label>
                             <?php
                             $db = dbConn();
@@ -316,14 +327,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             <span class="text-danger"><?= @$message['employeeStatus'] ?></span>
                         </div>
 
-                        <div class="form-group col-md-3">
+                        <div class="form-group col-md-4">
                             <label for="hire_date">Hire Date<span style = "color : red;"> * </span></label>
                             <input type="date" name="hire_date" class="form-control mb-1" id="hire_date" value="<?= @$hire_date ?>" max="<?= date('Y-m-d'); ?>">
                             <span class="text-danger"><?= @$message['hire_date'] ?></span>
-                        </div>
-                        <div class="form-group col-md-3 mt-3 mt-md-0">
-                            <label for="resign_date">Resign Date</label>
-                            <input type="date" name="resign_date" class="form-control mb-1" id="resign_date" value="<?= @$resign_date ?>" max="<?= date('Y-m-d'); ?>">
                         </div>
                     </div>
 

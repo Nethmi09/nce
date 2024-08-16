@@ -61,6 +61,6 @@ foreach ($issued_qty as $key => $qty) {
         }
     }
 }
- $sql = "UPDATE orders SET OrderStatus='1' WHERE OrderId = $order_id";
+ $sql = "UPDATE orders SET OrderStatus='3' WHERE OrderId = $order_id";
  $db->query($sql);
-header("Location:../orders/view_order_products.php?order_id=$order_id");
+header("Location:../orderIssue/view_order_products.php?order_id=$order_id");

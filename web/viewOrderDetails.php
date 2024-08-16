@@ -3,6 +3,71 @@ session_start();
 include 'header.php';
 include '../config.php';
 include '../function.php';
+
+$db = dbConn();
+$orderid = $_GET['orderid'] ?? null;
+
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    extract($_POST);
+    
+    if (isset($_POST['accept'])) {
+        $updateSql = "UPDATE orders SET OrderStatus = 7 WHERE OrderId = '$orderid'";
+        if ($db->query($updateSql)) {
+            echo "<script>
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Success!',
+                    text: 'Order has been accepted.',
+                }).then(function() {
+                    window.location.href = 'viewOrder.php?orderid=$orderid';
+                });
+            </script>";
+        } else {
+            echo "<script>
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error!',
+                    text: 'Failed to update order status. Please try again.',
+                });
+            </script>";
+        }
+    } elseif (isset($_POST['reject'])) {
+        $rejectReason = $_POST['rejectReason'];
+        $updateSql = "UPDATE orders SET OrderStatus = 8, RejectReason = '$rejectReason' WHERE OrderId = '$orderid'";
+        if ($db->query($updateSql)) {
+            echo "<script>
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Success!',
+                    text: 'Order has been rejected.',
+                }).then(function() {
+                    window.location.href = 'viewOrder.php?orderid=$orderid';
+                });
+            </script>";
+        } else {
+            echo "<script>
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error!',
+                    text: 'Failed to update order status. Please try again.',
+                });
+            </script>";
+        }
+    }
+}
+
+// Fetch order details
+$sql = "SELECT o.*, c.FirstName, c.LastName, d.Name AS DistrictName 
+        FROM orders o 
+        INNER JOIN customers c ON c.CustomerId = o.CustomerId 
+        INNER JOIN districts d ON d.Id = o.PersonalDistrictId 
+        WHERE o.OrderID = '$orderid'";
+$result = $db->query($sql);
+$row = $result->fetch_assoc();
+
+$orderStatus = $row['OrderStatus'];
+$disabled = ($orderStatus == 7 || $orderStatus == 8) ? 'disabled' : '';
+
 ?>
 
 <!-- Single Page Header start -->
@@ -17,20 +82,25 @@ include '../function.php';
         <div class="p-5 bg-light rounded">
             <div class="row g-4">
 
-                <?php
-                extract($_GET);
-                extract($_POST);
-                $db = dbConn();
-                $sql = "SELECT o.*, c.FirstName, c.LastName, d.Name 
-                        FROM orders o 
-                        INNER JOIN customers c ON c.CustomerId = o.CustomerId 
-                        INNER JOIN districts d ON d.Id = o.PersonalDistrictId 
-                        WHERE o.OrderID = '$orderid'";
-                $result = $db->query($sql);
-                $row = $result->fetch_assoc();
-                if ($result->num_rows > 0) {
-                ?>
-                <div class="row">
+                <div class="row mt-4">
+                    <div class="col">
+                        <div class="card">
+                            <div class="card-body">
+                                <h3><u>Order Status</u></h3>
+                                <?php
+                                if ($orderStatus == 7) {
+                                    echo "<span class='badge bg-success'>Accepted</span>";
+                                } elseif ($orderStatus == 8) {
+                                    echo "<span class='badge bg-danger'>Rejected</span>";
+                                    echo "<p>Reason: {$row['RejectReason']}</p>";
+                                }
+                                ?>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row mt-4">
                     <div class="col">
                         <div class="card">
                             <div class="card-body">
@@ -48,165 +118,23 @@ include '../function.php';
                                         <td><strong>Order Date</strong></td>
                                         <td><?= $row['OrderDate'] ?></td>
                                     </tr>
-                                </table> 
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col">
-                        <div class="card">
-                            <div class="card-body">
-                                <h3><u>Billing Details</u></h3>
-                                <table class="table table-bordered">
-                                    <tr>
-                                        <td><strong>Billing Name</strong></td>
-                                        <td><?= ($row['PersonalName']) ?></td>
-                                    </tr>
-                                    <tr>
-                                        <td><strong>Email</strong></td>
-                                        <td><?= ($row['PersonalEmail']) ?></td>
-                                    </tr>
-                                    <tr>
-                                        <td><strong>Contact Mobile</strong></td>
-                                        <td><?= ($row['PersonalContactMobile']) ?></td>
-                                    </tr>
-                                    <tr>
-                                        <td><strong>Alternate Mobile</strong></td>
-                                        <td><?= ($row['PersonalAlternateMobile']) ?></td>
-                                    </tr>
-                                    <tr>
-                                        <td><strong>Address Line 1</strong></td>
-                                        <td><?= ($row['PersonalAddressLine1']) ?></td>
-                                    </tr>
-                                    <tr>
-                                        <td><strong>Address Line 2</strong></td>
-                                        <td><?= ($row['PersonalAddressLine2']) ?></td>
-                                    </tr>
-                                    <tr>
-                                        <td><strong>City</strong></td>
-                                        <td><?= ($row['PersonalCity']) ?></td>
-                                    </tr>
-                                    <tr>
-                                        <td><strong>District</strong></td>
-                                        <td><?= ($row['Name']) ?></td>
-                                    </tr>
-                                </table> 
-
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col">
-                        <div class="card">
-                            <div class="card-body">
-                                <h3><u>Shipping Details</u></h3>
-                                <table class="table table-bordered">
-                                    <tr>
-                                        <td><strong>Shipping Name</strong></td>
-                                        <td><?= ($row['ShippingName']) ?></td>
-                                    </tr>
-                                    <tr>
-                                        <td><strong>Email</strong></td>
-                                        <td><?= ($row['ShippingEmail']) ?></td>
-                                    </tr>
-                                    <tr>
-                                        <td><strong>Contact Mobile</strong></td>
-                                        <td><?= ($row['ShippingContactMobile']) ?></td>
-                                    </tr>
-                                    <tr>
-                                        <td><strong>Alternate Mobile</strong></td>
-                                        <td><?= ($row['ShippingAlternateMobile']) ?></td>
-                                    </tr>
-                                    <tr>
-                                        <td><strong>Address Line 1</strong></td>
-                                        <td><?= ($row['ShippingAddressLine1']) ?></td>
-                                    </tr>
-                                    <tr>
-                                        <td><strong>Address Line 2</strong></td>
-                                        <td><?= ($row['ShippingAddressLine2']) ?></td>
-                                    </tr>
-                                    <tr>
-                                        <td><strong>City</strong></td>
-                                        <td><?= ($row['ShippingCity']) ?></td>
-                                    </tr>
-                                    <tr>
-                                        <td><strong>District</strong></td>
-                                        <td><?= ($row['Name']) ?></td>
-                                    </tr>
-                                </table> 
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <?php
-                }
-
-                $sql = "SELECT o.OrderId, o.ProductId, o.UnitPrice, o.Quantity, p.ProductName 
-                        FROM order_products o 
-                        INNER JOIN products p ON p.ProductId = o.ProductId 
-                        WHERE o.OrderId = '$orderid'";
-                $result = $db->query($sql);
-                ?>
-
-                <div class="row mt-4">
-                    <div class="col">
-                        <div class="card">
-                            <div class="card-body">
-                                <h3><u>Order Products</u></h3>
-                                <table id="" class="table table-bordered table-striped">
-                                    <thead>
-                                        <tr>
-                                            <th>Product</th>
-                                            <th>Unit Price</th>  
-                                            <th>Ordered Qty</th>               
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <?php
-                                        if ($result->num_rows > 0) {
-                                            while ($row = $result->fetch_assoc()) {
-                                                ?>
-                                                <tr>
-                                                    <td><?= $row['ProductName'] ?></td>
-                                                    <td><?= $row['UnitPrice'] ?></td>
-                                                    <td><?= $row['Quantity'] ?></td>
-                                                </tr>
-                                                <?php
-                                            }
-                                        }
-                                        ?>
-                                    </tbody>
                                 </table>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <?php
-          
-                extract($_GET);
-                extract($_POST);
-                $db = dbConn();
-                $sql = "SELECT * FROM orders o 
-                        WHERE o.OrderID = '$orderid'";
-                $result = $db->query($sql);
-                $row = $result->fetch_assoc();
-                if ($result->num_rows > 0) {
-                    
-                }
-           
-                ?>
                 <div class="row mt-4">
                     <div class="col">
                         <div class="card">
                             <div class="card-body">
                                 <h3><u>Order Summary</u></h3>
                                 <table class="table table-bordered">
-                                    
                                     <tr>
                                         <td><strong>Total Product/s Quantity</strong></td>
                                         <td><?= $row['Quantity'] ?></td>
                                     </tr>
-                                     <tr>
+                                    <tr>
                                         <td><strong>Grand Total</strong></td>
                                         <td><?= $row['GrandTOTAL'] ?></td>
                                     </tr>
@@ -219,14 +147,6 @@ include '../function.php';
                                         <td><?= $row['NetTotal'] ?></td>
                                     </tr>
                                     <tr>
-                                        <td><strong>Coupon Discount </strong></td>
-                                        <td><?= $row['CouponDiscount'] ?></td>
-                                    </tr>
-                                    <tr>
-                                        <td><strong>Net Total after Coupon Discount</strong></td>
-                                        <td><?= $row['NetTtAftCD'] ?></td>
-                                    </tr>
-                                    <tr>
                                         <td><strong>Courier Charge</strong></td>
                                         <td><?= $row['DeliveryCost'] ?></td>
                                     </tr>
@@ -234,9 +154,23 @@ include '../function.php';
                                         <td><strong>Total Amount</strong></td>
                                         <td><?= $row['TotalAmount'] ?></td>
                                     </tr>
-                                </table> 
+                                </table>
                             </div>
                         </div>
+                    </div>
+                </div>
+
+                <div class="row mt-4">
+                    <div class="col">
+                        <form method="POST" action="">
+                            <input type="hidden" name="orderid" value="<?= $orderid ?>">
+                            <div class="form-group">
+                                <button type="submit" name="accept" class="btn btn-success" <?= $disabled ?>>Accept</button>
+                            </div>
+                            <div class="form-group mt-2">
+                                <button type="button" class="btn btn-danger" <?= $disabled ?> onclick="showRejectModal()">Reject</button>
+                            </div>
+                        </form>
                     </div>
                 </div>
 
@@ -244,6 +178,38 @@ include '../function.php';
         </div>
     </div>
 </div>
+
+<!-- Reject Modal -->
+<div class="modal fade" id="rejectModal" tabindex="-1" role="dialog" aria-labelledby="rejectModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <form method="POST" action="">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="rejectModalLabel">Reject Order</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="rejectReason">Reason for Rejection</label>
+                        <textarea class="form-control" id="rejectReason" name="rejectReason" required></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="submit" name="reject" class="btn btn-danger">Submit</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+function showRejectModal() {
+    $('#rejectModal').modal('show');
+}
+</script>
 
 <?php
 include 'footer.php';

@@ -11,7 +11,7 @@ extract($_GET);
 
 <div class="row">
     <div class="col-12">
-        <a href="<?= SYS_URL ?>employees/manage.php" class="btn btn-dark mb-4"><i class="fas fa-arrow-left"></i> Back to Employee List</a>
+        <a href="<?= SYS_URL ?>employees/manage.php" class="btn btn-dark mb-4"><i class="fas fa-arrow-left"></i> Back to Employees Listing Table</a>
         <div class="card">
             <div class="card-header">
                 <h3 class="card-title">Employee Details</h3>
@@ -21,8 +21,8 @@ extract($_GET);
 
                 <?php
                 $db = dbConn();
-                $sql = "SELECT EmployeeId,RegistrationNumber,FirstName, LastName, NICNumber, Email, ContactMobile, AlternateMobile, "
-                        . "AddressLine1, AddressLine2, City, Image, DOB, Gender, HireDate, ResignDate, AccountName, AccountNumber, BankName, Branch, "
+                $sql = "SELECT EmployeeId,FirstName, LastName, NICNumber, Email, ContactMobile, AlternateMobile, "
+                        . "AddressLine1, AddressLine2, City, Image, DOB, Gender, HireDate, AccountName, AccountNumber, BankName, Branch, "
                         . "d.DesignationName, c.CivilStatusName, s.EmployeeStatusName, t.Name FROM employees e "
                         . "INNER JOIN designations d ON d.DesignationId=e.DesignationId "
                         . "INNER JOIN districts t ON t.ID=e.DistrictId "
@@ -54,10 +54,6 @@ extract($_GET);
                                             <tr>
                                                 <th style="width: 400px;">Employee ID</th>
                                                 <td><?= $employee['EmployeeId'] ?></td>
-                                            </tr>
-                                            <tr>
-                                                <th style="width: 400px;">Registration Number</th>
-                                                <td><?= $employee['RegistrationNumber'] ?></td>
                                             </tr>
                                             <tr>
                                                 <th style="width: 400px;">Employee Image</th>
@@ -132,10 +128,6 @@ extract($_GET);
                                             <tr>
                                                 <th style="width: 400px;">Hire Date</th>
                                                 <td><?= $employee['HireDate'] ?></td>
-                                            </tr>
-                                            <tr>
-                                                <th style="width: 400px;">Resign Date</th>
-                                                <td><?= $employee['ResignDate'] ?></td>
                                             </tr>
                                             
                                         </tbody>

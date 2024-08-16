@@ -12,7 +12,8 @@ extract($_POST);
 <?php
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && @$action == 'add') {
     $db = dbConn();
-    $sql = "SELECT * FROM price_request WHERE RequestDate='$RequestDate'";
+    $sql = "SELECT * FROM price_request WHERE RequestDate='$RequestDate' AND SupplierId='$Supplier' ";
+    //$sql = "SELECT * FROM price_request WHERE RequestDate='$RequestDate'";
     $result = $db->query($sql);
     // Add 3 days to the RequestDate
     $FinalUpdateDate = date('Y-m-d', strtotime($RequestDate . ' +3 days'));
@@ -26,6 +27,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && @$action == 'add') {
 
     $sql = "INSERT INTO price_request_item( PriceRequestId, ItemId, Qty, UnitPrice, UpdatedDate) VALUES ('$PriceRequestId','$Product','$Qty', null, null)";
     $db->query($sql);
+    
+    
 }
 ?>
 
@@ -68,15 +71,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && @$action == 'add') {
 
                     <div class="row">
                         <div class="form-group col-md-6">
-                            <label for="DeliverDate" class="form-label fw-bold">Required Date<span style = "color: red"> * </span></label>
-                            <input type="date" class="form-control" id="DeliverDate" name="DeliverDate" placeholder="Enter Deliver Date" value="<?= @$DeliverDate ?>">
-                            <span class="text-danger"><?= @$message['DeliverDate'] ?></span>
-                        </div>
-                        <div class="form-group col-md-6">
                             <label for="RequestDate" class="form-label fw-bold">Request Date<span style = "color: red"> * </span></label>
                             <input type="date" class="form-control" id="RequestDate" name="RequestDate" placeholder="Enter Deliver Date" value="<?= @$RequestDate ?>">
                             <span class="text-danger"><?= @$message['RequestDate'] ?></span>
                         </div>
+                        <div class="form-group col-md-6">
+                            <label for="DeliverDate" class="form-label fw-bold">Required Date<span style = "color: red"> * </span></label>
+                            <input type="date" class="form-control" id="DeliverDate" name="DeliverDate" placeholder="Enter Deliver Date" value="<?= @$DeliverDate ?>">
+                            <span class="text-danger"><?= @$message['DeliverDate'] ?></span>
+                        </div>
+                        
                     </div>
                     <table class="table table-bordered table-striped" id="items">
                         <thead>
@@ -143,7 +147,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             <th>Required Date</th>
                             <th>Product</th>
                             <th>Quantity</th>
-                            <th></th>
                         </tr>
                         <?php
                         if ($result->num_rows > 0) {
@@ -155,13 +158,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                     <td><?= $row['DeliverDate'] ?></td>
                                     <td><?= $row['ProductName'] ?></td>
                                     <td><?= $row['Qty'] ?></td>
-                                    <td><a href="<?= SYS_URL ?>send_quote.php?date=<?= $row['RequestDate'] ?>" class="btn btn-info">Send Quotation Request</a></td>
                                 </tr>
+                                
                                 <?php
                             }
                         }
+                       
                         ?>
+                                
                     </table>
+                    
+                  <a href="<?= SYS_URL ?>send_quote.php?PriceRequestId=<?= $PriceRequestId ?>" class="btn btn-info">Send Price Request</a>
 
                 </div>
             </div>

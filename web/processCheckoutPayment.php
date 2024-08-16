@@ -9,13 +9,13 @@ include '../config.php';
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     extract($_POST);
+    $total = $_SESSION['TOTALAMOUNT'];
+    $deliveryyy = $_SESSION['DELIVERYCOST'];
 
     $message = array();
 
     // Required validation-----------------------------------------------
-    if (empty($courier_district)) {
-        $message['courier_district'] = "Courier District is required...!";
-    }
+
     if (empty($payment_method)) {
         $message['payment_method'] = "Payment Method is required...!";
     }
@@ -23,32 +23,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if (empty($message)) {
         $db = dbConn();
         $processCheckout = $_SESSION['lastInsertId'];
-        $checksql11 = "SELECT * FROM districts WHERE Id = '$courier_district'";
-        $resultCheck = $db->query($checksql11);
-
-        $rowCheck = $resultCheck->fetch_assoc();
-        $courier_cost = $rowCheck['DeliveryCost'];
 
         $OrderId = $_SESSION['lastInsertId'];
 
-        // Calculate the total payment again in PHP
-        $cart = $_SESSION['cart'];
-        $all_products_total_amount = 0;
-        foreach ($cart as $key => $value) {
-            $product_line_total = $value['UnitPrice'] * $value['Quantity'];
-            $all_products_total_amount += $product_line_total;
-        }
-        $discount = $all_products_total_amount * 0.03; // Assuming a 3% discount
-        $net_total = $all_products_total_amount - $discount;
-        $coupon_discount = $net_total * 0.05; // Assuming a 5% coupon discount
-        $net_total_after_coupon = $net_total - $coupon_discount;
-        $total_payment = $net_total_after_coupon + $courier_cost;
-
-        // Update the order table with courier district, courier cost, payment method, and total amount using session id
-        $updatesql = "UPDATE orders SET DistrictId = '$courier_district', DeliveryCost = '$courier_cost', PaymentMethod = '$payment_method', TotalAmount = '$total_payment' WHERE OrderId = '$OrderId'";
+        // Update the order table
+        $updatesql = "UPDATE orders SET DeliveryCost = '$deliveryyy', TotalAmount = '$total' , PaymentMethod = '$payment_method' WHERE OrderId = '$OrderId'";
         $db->query($updatesql);
 
-        // Check payment method with user redirection pages
+        unset($_SESSION['cart']);
+
+        // Redirect based on payment method
         if ($payment_method == '1') {
             header("Location:order_success.php");
         } elseif ($payment_method == '2') {
@@ -102,9 +86,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             <tbody>
                                 <?php
                                 $all_products_total_amount = 0;
-                                $discount = 0;
-                                $net_total = 0;
-                                $coupon_discount = 0;
+                                $disCount = $_SESSION['Discount'];
+                                $netTOtal = $_SESSION['netTotal'];
                                 foreach ($cart as $key => $value) {
                                     ?>
 
@@ -122,10 +105,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                     </tr>
                                     <?php
                                 }
-                                $discount = $all_products_total_amount * 0.03; // Assuming a 3% discount
+                                $discount = 0;
                                 $net_total = $all_products_total_amount - $discount;
-                                $coupon_discount = $net_total * 0.05; // Assuming a 5% coupon discount
-                                $net_total_after_coupon = $net_total - $coupon_discount;
                                 ?>
                             </tbody>
 
@@ -139,78 +120,62 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         </div>
 
                         <div class="d-flex justify-content-between mb-4">
-                            <h5 class="mb-0 me-4">Discount (3%)</h5>
+                            <h5 class="mb-0 me-4">Discount</h5>
                             <div class="">
-                                <p class="mb-0">Rs. <?= number_format($discount, 2) ?></p>
+                                <p class="mb-0">Rs. <?= number_format($disCount, 2) ?></p>
                             </div>
                         </div>
 
                         <div class="d-flex justify-content-between mb-4">
                             <h5 class="mb-0 me-4">Net Total</h5>
                             <div class="">
-                                <p class="mb-0"> Rs. <?= number_format($net_total, 2) ?></p>
+                                <p class="mb-0"> Rs. <?= number_format($netTOtal, 2) ?></p>
                             </div>
                         </div>
-
-                        <div class="d-flex justify-content-between mb-4">
-                            <h5 class="mb-0 me-4">Coupon Discount (5%)</h5>
-                            <div class="">
-                                <p class="mb-0">Rs. <?= number_format($coupon_discount, 2) ?></p>
-                            </div>
-                        </div>
-
-                        <div class="d-flex justify-content-between mb-4">
-                            <h5 class="mb-0 me-4">Net Total After Coupon Discount</h5>
-                            <div class="">
-                                <p class="mb-0">Rs. <?= number_format($net_total_after_coupon, 2) ?></p>
-                            </div>
-                        </div>
-
                         <div class="rounded-border mb-4">
                             <h4 class="mt-2">Delivery</h4>
 
-                            <p>The courier charge will vary by district. Please select your district to view the courier charge.</p>
-
+                            <p>The courier charge will vary by shipping district.</p>
                             <?php
+                            extract($_GET);
                             $db = dbConn();
-                            $sql = "SELECT * FROM districts";
-                            $result = $db->query($sql);
+                            //$shipdistrict = $_SESSION['ShippingDISTRICT'];
                             ?>
-
-                            <div class="row">
-
-                                <div class="col-md-6 mb-3">
-                                    <label for="courier_district">Courier District<span style="color: red;"> *</span></label>
-                                    <?php
-                                    $courier_district = $_SESSION['DISTRICT'];
-                                    ?>
-                                    <select name="courier_district" id="courier_district" class="form-select border border-1" value="<?= @$courier_district ?>" aria-label="Courier District" onchange="updateDeliveryCost()">
-                                        <option value="">Select District</option>
-                                        <?php
-                                        while ($row = $result->fetch_assoc()) {
-                                            ?>
-                                            <option value="<?= $row['Id'] ?>" data-cost="<?= $row['DeliveryCost'] ?>" <?= $row['Id'] == $courier_district ? 'selected' : '' ?>><?= $row['Name'] ?></option>
-                                            <?php
-                                        }
-                                        ?>
-                                    </select>
-                                    <span class="text-danger"><?= @$message['courier_district'] ?></span>
-                                </div>
-
-                            </div>
-
                             <div class="d-flex justify-content-between mb-4">
                                 <h5 class="mb-0 me-4">Courier Charge</h5>
+<!--<p class="mb-0"><?= $shipdistrict ?></p>-->
+                                <?php
+                                extract($_GET);
+                                $db = dbConn();
+                                $OrderId = $_SESSION['lastInsertId'];
+                                $sql = "SELECT d.DeliveryCost,d.Name FROM districts d inner join orders o ON o.ShippingDistrictId=d.Id WHERE o.OrderId='$OrderId'";
+                                $result1 = $db->query($sql);
+                                $row_district = $result1->fetch_assoc();
+                                //$district = $row_district['Name'];
+                                //$_SESSION['ShippingDISTRICT'] = $row_district['Name'];
+                                $delivery_cost = $row_district['DeliveryCost'];
+                                $_SESSION['DELIVERYCOST'] = @$delivery_cost;
+                                ?>
                                 <div class="">
-                                    <p class="mb-0" id="courier_cost">Rs. 0.00</p>
+
+                                    <p class="mb-0" id="courier_cost">Rs. <?= number_format($delivery_cost, 2) ?></p>
                                 </div>
                             </div>
                         </div>
 
                         <div class="d-flex justify-content-between mb-4 rounded-border bg-info text-white p-3">
                             <h5 class="mb-0 me-4">Total Payment</h5>
+                            <?php
+                            extract($_GET);
+                            $db = dbConn();
+                            // Calculate the total payment
+                            $netTotal = $_SESSION['netTotal'];  // Assuming this includes all discounts
+                            $total_payment = $netTotal + $delivery_cost;
+
+                            $_SESSION['TOTALAMOUNT'] = @$total_payment;
+                            ?>
                             <div class="">
-                                <p class="mb-0" id="total_payment"></p>
+                                <p class="mb-0" id="total_payment">Rs. <?= number_format($total_payment, 2) ?></p>
                             </div>
                         </div>
 
@@ -225,11 +190,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             </select>
                         </div>
 
-                        <!-- Place Holder Button Start -->
+                        <!-- Place Order Button Start -->
                         <div class="text-center mt-4">
                             <button class="btn btn-primary form-control border-secondary py-3 bg-white text-primary" type="submit">Place Order</button>
                         </div>
-                        <!-- Place Holder Button End -->
+                        <!-- Place Order Button End -->
 
 
                     </div>
@@ -247,31 +212,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 <!-- Checkout page content end -->
 
-<script>
-    function updateDeliveryCost() {
-        const selectElement = document.getElementById('courier_district');
-        const selectedOption = selectElement.options[selectElement.selectedIndex];
-        const deliveryCost = parseFloat(selectedOption.getAttribute('data-cost'));
-        const courierCostElement = document.getElementById('courier_cost');
-        const totalPaymentElement = document.getElementById('total_payment');
-
-        courierCostElement.textContent = `Rs. ${deliveryCost.toFixed(2)}`;
-
-        const netTotalAfterCoupon = <?= $net_total_after_coupon ?>;
-        const totalPayment = netTotalAfterCoupon + deliveryCost;
-        totalPaymentElement.textContent = `Rs. ${totalPayment.toFixed(2)}`;
-        
-        // Update hidden input for total payment
-        document.getElementById('hidden_total_payment').value = totalPayment;
-    }
-
-    // Call the function once to initialize the values if a district is already selected
-    updateDeliveryCost();
-</script>
-
-<input type="hidden" id="hidden_total_payment" name="total_payment" value="">
 
 <?php
 include 'footer.php';
-ob_end_flush();
 ?>

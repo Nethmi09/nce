@@ -43,6 +43,10 @@ $breadcrumb_item_active = "Add Stock";
                 if (empty($UnitPrice)) {
                     $message['UnitPrice'] = "Unit Price is required...!";
                 }
+                 if (empty($invoice)) {
+                    $message['invoice'] = "Invoice Number is required...!";
+                }
+                
 //    Advance validation
 
 
@@ -53,7 +57,7 @@ $breadcrumb_item_active = "Add Stock";
                     foreach ($ProductId as $key => $value) {
                         $q = $Quantity[$key];
                         $up = $UnitPrice[$key];
-                        $sql = "INSERT INTO product_stocks(ProductId, Quantity, UnitPrice, PurchaseDate, SupplierId) VALUES ('$value','$q','$up','$purchase_date','$supplier')";
+                        $sql = "INSERT INTO product_stocks(ProductId, Quantity, UnitPrice, PurchaseDate, InvoiceNumber, SupplierId) VALUES ('$value','$q','$up','$purchase_date','$invoice','$supplier')";
                         $db->query($sql);
                     }
 
@@ -72,7 +76,7 @@ $breadcrumb_item_active = "Add Stock";
                     <!--Supplier Name-->
 
                     <div class="row">
-                        <div class="form-group col-md-6">
+                        <div class="form-group col-md-4">
                             <label for="supplier">Supplier<span style = "color : red"> * </span></label>
                             <?php
                             $db = dbConn();
@@ -92,10 +96,16 @@ $breadcrumb_item_active = "Add Stock";
                             <span class="text-danger"><?= @$message['supplier'] ?></span>
                         </div>
 
-                        <div class="form-group col-md-6">
+                        <div class="form-group col-md-4">
                             <label for="purchase_date" class="form-label fw-bold">Purchase Date<span style = "color: red"> * </span></label>
                             <input type="date" name="purchase_date" class="form-control mb-1" id="purchase_date" value="<?= @$purchase_date ?>">
                             <span class="text-danger"><?= @$message['purchase_date'] ?></span>
+                        </div>
+                        
+                        <div class="form-group col-md-4">
+                            <label for="invoice" class="form-label fw-bold">Invoice Number<span style = "color: red"> * </span></label>
+                            <input type="text" name="invoice" class="form-control mb-1" id="invoice" value="<?= @$invoice ?>" placeholder="Enter Invoice Number">
+                            <span class="text-danger"><?= @$message['invoice'] ?></span>
                         </div>
                     </div>
 

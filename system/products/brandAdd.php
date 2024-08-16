@@ -61,7 +61,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if (empty($message)) {
 //Insert data into the brands table
         $db = dbConn();
-        $sql = "INSERT INTO brands(BrandImage,BrandName,BDescription,MainCategoryId,BStatus) VALUES ('$brand_image', '$brand_name','$description','$main_category','1')";
+        $sql = "INSERT INTO brands(BrandImage,BrandName,BDescription,MainCategoryId,BStatus) "
+                . "VALUES ('$brand_image', '$brand_name','$description','$main_category','1')";
         $db->query($sql);
         $BrandId = $db->insert_id;
 

@@ -61,17 +61,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     //    Advance validation
 
-     if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-                            $message['email'] = "Invalid Email Address.";
-                        } else {
-                            $db = dbConn();
-                            $sql = "SELECT * FROM suppliers WHERE Email='$email'";
-                            $result = $db->query($sql);
-
-                            if ($result->num_rows > 0) {
-                                $message ['email'] = "This Email Address is already exist!";
-                            }
-                        }
+//     if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+//                            $message['email'] = "Invalid Email Address.";
+//                        } else {
+//                            $db = dbConn();
+//                            $sql = "SELECT * FROM suppliers WHERE Email='$email'";
+//                            $result = $db->query($sql);
+//
+//                            if ($result->num_rows > 0) {
+//                                $message ['email'] = "This Email Address is already exist!";
+//                            }
+//                        }
 
     if (empty($message)) {
 

@@ -9,16 +9,9 @@ $breadcrumb_item_active = "Add";
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     extract($_POST);
     $product_name = dataClean($product_name);
-    $product_brand = dataClean($product_brand);
-    $product_category = dataClean($product_category);
-    $supplier = dataClean($supplier);
     $purchase_price = dataClean($purchase_price);
     $selling_price = dataClean($selling_price);
     $description = dataClean($description);
-    $warranty_period = dataClean($warranty_period);
-    $discount = dataClean($discount);
-    $start_date = dataClean($start_date);
-    $end_date = dataClean($end_date);
 
     $message = array();
 
@@ -27,7 +20,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if (empty($product_name)) {
         $message['product_name'] = "Product Name is required.";
     }
-
+    if (empty($product_main_category)) {
+        $message['product_main_category'] = "Product Main Category is required.";
+    }
     if (empty($product_brand)) {
         $message['product_brand'] = "Product Brand is required.";
     }
@@ -47,6 +42,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if (empty($selling_price)) {
         $message['selling_price'] = "Selling Price is required.";
     }
+
+    if (empty($product_image)) {
+        $message['product_image'] = "Product Image is required.";
+    }
+
+
 
     //    Advance validation    
     // File upload handling
@@ -85,8 +86,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             echo '<br>';
         } else {
             //add the product in to products  table
-            $sql = "INSERT INTO products(ProductName, MainCategoryId , BrandID, CategoryId, SupplierId, ProductImage, PurchasePrice, SellingPrice, PDescription, WarrantyPeriod, Discount, DiscountStartDate, DiscountEndDate,Status,Quantity) "
-                    . "VALUES ('$product_name','$product_main_category','$product_brand','$product_category','$supplier','$product_image','$purchase_price','$selling_price','$description','$warranty_period','$discount','$start_date','$end_date','1','1')";
+            $sql = "INSERT INTO products(ProductName, MainCategoryId , BrandID, CategoryId, SupplierId, ProductImage, PurchasePrice, SellingPrice, PDescription, Discount, DiscountStartDate, DiscountEndDate,Status,Quantity) "
+                    . "VALUES ('$product_name','$product_main_category','$product_brand','$product_category','$supplier','$product_image','$purchase_price','$selling_price','$description','$discount','$start_date','$end_date','1','1')";
             $db->query($sql);
             $ProductID = $db->insert_id;
 
@@ -120,8 +121,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             <input type="text" name="product_name" class="form-control mb-1" id="product_name" value="<?= @$product_name ?>" placeholder="Enter Product Name">
                             <span class="text-danger"><?= @$message['product_name'] ?></span>
                         </div> 
-                        
-                         <div class="form-group col-md-3">
+
+                        <div class="form-group col-md-3">
                             <label for="product_main_category">Product Main Category<span style = "color : red"> * </span></label>
                             <?php
                             $db = dbConn();
@@ -140,7 +141,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             </select>
                             <span class="text-danger"><?= @$message['product_main_category'] ?></span>
                         </div>
-                        
+
                         <div class="form-group col-md-3">
                             <label for="product_category">Product Category<span style = "color : red"> * </span></label>
                             <?php
@@ -181,7 +182,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             <span class="text-danger"><?= @$message['product_brand'] ?></span>
                         </div>
 
-                        
+
 
                     </div>
 
@@ -233,34 +234,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     <!--Product Image and Warranty Period-->
 
                     <div class="row">
-                        <div class="form-group col-md-6">
-                            <label for="product_image">Product Image</label>
+                        <div class="form-group col-md-12">
+                            <label for="product_image">Product Image<span style = "color : red"> * </span></label>
                             <div class="input-group">
                                 <div class="custom-file">
                                     <input type="file" name="product_image" id="product_image" value="<?= @$product_image ?>" class="form-control">
+                                    <span class="text-danger"><?= @$message['product_image'] ?></span>
                                 </div>
                             </div>
                         </div>
 
-                        <div class="form-group col-md-6">
-                            <label for="warranty_period">Warranty Period</label>
-                            <input type="text" name="warranty_period" class="form-control mb-1" id="warranty_period" value="<?= @$warranty_period ?>" placeholder="Enter Warranty Period">
 
-                        </div>
-
-                    </div>
-
-                    <div class="row">
-                        <div class="form-group col-md-6">
-                            <label for="batchNumber" class="form-label fw-bold">Batch Number</label>
-                            <input type="text" name="batchNumber" class="form-control mb-1" id="batchNumber" value="<?= @$batchNumber ?>" placeholder="Enter Batch Number">
-                        </div>
-
-                        <div class="form-group col-md-6 mt-3 mt-md-0">
-                            <label for="sereal_number">Serial Number</label>
-                            <input type="text" name="sereal_number" class="form-control mb-1" id="sereal_number" value="<?= @$sereal_number ?>">
-
-                        </div>
                     </div>
 
 
@@ -268,7 +252,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 
                 <div class="card-footer">
-                   <a href="<?= SYS_URL ?>products/productManage.php" class="btn btn-secondary">Cancel</a>
+                    <a href="<?= SYS_URL ?>products/productManage.php" class="btn btn-secondary">Cancel</a>
                     <button type="submit" class="btn submit">Submit</button>
                 </div>
             </form>

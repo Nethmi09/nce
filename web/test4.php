@@ -1,266 +1,265 @@
+<?php include '../header.php'; ?>
+<?php include '../menu.php'; ?>
 <?php
-ob_start();
-session_start();
-include 'header.php';
-include '../function.php';
-include '../mail.php';
-include '../config.php';
-
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-
-    extract($_POST);
-
-    $message = array();
-
-    // Required validation-----------------------------------------------
-
-    if (empty($courier_district)) {
-        $message['courier_district'] = "Courier District is required...!";
-    }
-    if (empty($payment_method)) {
-        $message['payment_method'] = "Payment Method is required...!";
-    }
-
-    if (empty($message)) {
-        $db = dbConn();
-        $processCheckout = $_SESSION['lastInsertId'];
-        $checksql11 = "SELECT * FROM districts WHERE Id = '$courier_district'";
-        $resultCheck = $db->query($checksql11);
-
-        $rowCheck = $resultCheck->fetch_assoc();
-        $courier_cost = $rowCheck['DeliveryCost'];
-
-        $OrderId = $_SESSION['lastInsertId'];
-        // Calculate total payment
-        $net_total_after_coupon = $_POST['net_total_after_coupon'];
-        $total_payment = $net_total_after_coupon + $courier_cost;
-
-        // Update the order table with courier district, courier cost, payment method, and total amount using session id
-        $updatesql = "UPDATE orders SET DistrictId = '$courier_district', DeliveryCost = '$courier_cost', "
-        . "PaymentMethod = '$payment_method', TotalAmount = '$total_payment' WHERE OrderId = $OrderId";
-        $db->query($updatesql);
-
-        // Check payment method with user redirection pages
-        if ($payment_method == '1') {
-            header("Location:order_success.php");
-        } elseif ($payment_method == '2') {
-            header("Location:bankDetails.php");
-        } else {
-            header("Location:processCheckoutPayment.php");
-        }
-    }
+if (!isset($_SESSION['CustomerId'])) {
+    header("Location:../signin/signin.php");
 }
 ?>
 
-<!-- Single Page Header start -->
-<div class="container-fluid page-header py-5">
-    <h1 class="text-center text-white display-6">Payment Details</h1>
-</div>
-<!-- Single Page Header End -->
+<?php
+//extract($_POST);
+//if ($_SERVER['REQUEST_METHOD'] == "POST" && @$action == 'orderhistory') {
+//    extract($_POST);
+////    $CustomerId = $_GET['CustomerId'];
+//    echo $CustomerId;
+//    echo $sql = "SELECT * FROM tbl_orders  WHERE customerId=$CustomerId";
+//    $db = dbConn();
+//    $results = $db->query($sql);
+//}
+?>
+<main>
+    <section id="acv" class="section">
+        <div class="section-title" >
+            <h2 class="">Personal and Payments Details</h2>
+        </div>
+    </section>
 
-<!-- Checkout page content start -->
-<div class="container-fluid contact py-5">
-    <div class="container py-5">
-        <?php
-        $total = 0;
-        $noproducts = 0;
-        if (isset($_SESSION['cart'])) {
-            $cart = $_SESSION['cart'];
-            foreach ($cart as $key => $value) {
-                $total += $value['Quantity'] * $value['UnitPrice'];
-                $noproducts += $value['Quantity'];
-            }
-        }
-        ?>
+    <form action="customerDashboard.php" method="POST">
 
-        <form action="<?= htmlspecialchars($_SERVER['PHP_SELF']); ?>" method="post" class="" novalidate>  <!--Submit to the same page (htmlspecialchars)-->
+        <input type="hidden" name="CustomerId" value="<?= $_SESSION['CustomerId'] ?>">
+        <button type="submit" name="action" value="updateprofile" class="btn btn-primary btn-lg btn-block">Back Dashboard</button>
 
-            <!-- Order Summary Card Start -->
-            <div class="col-md-12 mt-4 mb-4">
-                <div class="p-5 bg-light rounded ">
-                    <h1 class="display-6 mb-4">Order <span class="fw-normal">Summary</span></h1>
-                    <div class="">             
-
-                        <table class="table">
-                            <thead>
-                                <tr>
-                                    <th scope="col">Name</th>
-                                    <th scope="col">Price</th>
-                                    <th scope="col">Quantity</th>
-                                    <th scope="col">Total</th>
-                                </tr>
-                            </thead>
-
-                            <tbody>
-                                <?php
-                                $all_products_total_amount = 0;
-                                $discount = 0;
-                                $net_total = 0;
-                                $coupon_discount = 0;
-                                foreach ($cart as $key => $value) {
-                                    ?>
-
-                                    <tr>
-                                        <td><?= $value['ProductName'] ?></td>
-                                        <td>Rs. <?= $value['UnitPrice'] ?></td>
-                                        <td><?= $value['Quantity'] ?></td>
-                                        <td>
-                                            <?php
-                                            $product_line_total = $value['UnitPrice'] * $value['Quantity'];
-                                            $all_products_total_amount += $product_line_total;
-                                            echo number_format($product_line_total, 2);
-                                            ?>
-                                        </td>
-                                    </tr>
-                                    <?php
-                                }
-                                $discount = $all_products_total_amount * 0.03; // Assuming a 3% discount
-                                $net_total = $all_products_total_amount - $discount;
-                                $coupon_discount = $net_total * 0.05; // Assuming a 5% coupon discount
-                                $net_total_after_coupon = $net_total - $coupon_discount;
-                                ?>
-                            </tbody>
-
-                        </table>
-
-                        <div class="d-flex justify-content-between mb-4 mt-4">
-                            <h5 class="mb-0 me-4">Products Total</h5>
-                            <div class="">
-                                <p class="mb-0">Rs. <?= number_format($all_products_total_amount, 2) ?></p>
-                            </div>
-                        </div>
-
-                        <div class="d-flex justify-content-between mb-4">
-                            <h5 class="mb-0 me-4">Discount (3%)</h5>
-                            <div class="">
-                                <p class="mb-0">Rs. <?= number_format($discount, 2) ?></p>
-                            </div>
-                        </div>
-
-                        <div class="d-flex justify-content-between mb-4">
-                            <h5 class="mb-0 me-4">Net Total</h5>
-                            <div class="">
-                                <p class="mb-0"> Rs. <?= number_format($net_total, 2) ?></p>
-                            </div>
-                        </div>
-
-                        <div class="d-flex justify-content-between mb-4">
-                            <h5 class="mb-0 me-4">Coupon Discount (5%)</h5>
-                            <div class="">
-                                <p class="mb-0">Rs. <?= number_format($coupon_discount, 2) ?></p>
-                            </div>
-                        </div>
-
-                        <div class="d-flex justify-content-between mb-4">
-                            <h5 class="mb-0 me-4">Net Total After Discount</h5>
-                            <div class="">
-                                <p class="mb-0">Rs. <?= number_format($net_total_after_coupon, 2) ?></p>
-                            </div>
-                        </div>
-
-                        <div class="rounded-border mb-4">
-                            <h4 class="mt-2">Delivery</h4>
-
-                            <p>The courier charge will vary by district. Please select your district to view the courier charge.</p>
-
-                            <?php
-                            $db = dbConn();
-                            $sql = "SELECT * FROM districts";
-                            $result = $db->query($sql);
-                            ?>
-
-                            <div class="row">
-
-                                <div class="col-md-6 mb-3">
-                                    <label for="courier_district">Courier District<span style="color: red;"> *</span></label>
-                                    <?php
-                                    $courier_district = $_SESSION['DISTRICT'];
-                                    ?>
-                                    <select name="courier_district" id="courier_district" class="form-select border border-1" value="<?= @$courier_district ?>" aria-label="Courier District" onchange="updateDeliveryCost()">
-                                        <option value="">Select District</option>
-                                        <?php
-                                        while ($row = $result->fetch_assoc()) {
-                                            ?>
-                                            <option value="<?= $row['Id'] ?>" data-cost="<?= $row['DeliveryCost'] ?>" <?= $row['Id'] == $courier_district ? 'selected' : '' ?>><?= $row['Name'] ?></option>
-                                            <?php
-                                        }
-                                        ?>
-                                    </select>
-                                    <span class="text-danger"><?= @$message['courier_district'] ?></span>
-                                </div>
-
-                            </div>
-
-                            <div class="d-flex justify-content-between mb-4">
-                                <h5 class="mb-0 me-4">Courier Charge</h5>
-                                <div class="">
-                                    <p class="mb-0" id="courier_cost">Rs. 0.00</p>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="d-flex justify-content-between mb-4 rounded-border bg-info text-white p-3">
-                            <h5 class="mb-0 me-4">Total Payment</h5>
-                            <div class="">
-                                <p class="mb-0" id="total_payment">Rs. <?= number_format($net_total_after_coupon, 2) ?></p>
-                            </div>
-                        </div>
+    </form>
 
 
-                        <div>
-                            <label for="payment_method">Payment Method<span style = "color : red;"> * </span></label>
-                            <select name="payment_method" id=""  class="form-select mb-4 border border-1" value="<?= @$payment_method ?>" aria-label="Large select example">
-                                <option value="" >Select Payment Method</option>
-                                <option value="1" >Cash on Delivery</option>
-                                <option value="2" >Bank Transfer</option>
-
-                            </select>
-                        </div>
-
-                        <!-- Place Holder Button Start -->
-                        <div class="text-center mt-4">
-                            <button class="btn btn-primary form-control border-secondary py-3 bg-white text-primary" type="submit">Place Order</button>
-                        </div>
-                        <!-- Place Holder Button End -->
 
 
-                    </div>
+    <section>
+        <form method="post"  action="<?= htmlspecialchars($_SERVER['PHP_SELF']) ?>">
+            <div class="row g-3">
+                <div class="col-sm-4 text-center" style="margin-left: 120px">
+                    <label></label>
+                    <input type="text" name="orderID" value="<?= @$orderID ?>" class="form-control" placeholder="Enter Order ID">
+                </div>
+                <div class="col-sm">
+                    <?php
+//                $db = dbConn();
+//                $sql = "SELECT DISTINCT Model FROM vehicle";
+//                $result = $db->query($sql);
+                    ?>
+                    <label></label>
+                    <select name="payementmethod" class="form-control">
+                        <option value="">--Payment Method--</option>
+                        <option value="Bank_transfer">Bank transfer</option>
+                        <option value="Cashondelivery">Cashondelivery</option>
+
+                    </select>
+                </div>
+                <div class="col-sm">
+                    <label> From</label>
+                    <input type="date" class="form-control" name="from" placeholder="Enter From Date" >
+                </div>
+                <div class="col-sm">
+                    <label> To</label>
+                    <input type="date" class="form-control" name="to" placeholder="Enter To Date" >
+                </div>
+                <div class="col-sm">
+
+                    <input type="hidden" name="CustomerId " value="<?= $_SESSION['CustomerId'] ?>">
+                    <label></label>
+                    <button type="submit" class="btn btn-warning">Search</button>
                 </div>
             </div>
-            <!-- Order Summary Card End -->            
+        </form>
 
-    </div>
-    <!--Bank Details and Order Summary Cards Start-->
+        <?php
+        $where = null;
+        extract($_POST);
+        if ($_SERVER['REQUEST_METHOD'] == "POST") {
+            if (!empty($orderID)) {
+                $where .= " orderID='$orderID' AND";
+            }
+            if (!empty($payementmethod)) {
+                $where .= " payementmethod='$payementmethod' AND";
+            }
+            if (!empty($from) && empty($to)) {
+                $where .= " adddate  = '$from' AND";
+            }
+            if (empty($from) && !empty($to)) {
+                $where .= " adddate  = '$to' AND";
+            }
+            if (!empty($from) && !empty($to)) {
+                $where .= " adddate  BETWEEN '$from' AND '$to' AND";
+            }
+        }
+
+//        if (!empty($where)) {
+//            $where = substr($where, 0, -3);
+//            $where = " WHERE $where";
+//        }
+
+
+        if (!empty($where)) {
+            $where = substr($where, 0, -3);
+            $where = " AND $where";
+        }
 
 
 
-</form>
+//        extract($_POST);
+//        if ($_SERVER['REQUEST_METHOD'] == "POST" ) {
+        extract($_POST);
+//    $CustomerId = $_GET['CustomerId'];
+        $CustomerId = $_SESSION['CustomerId'];
+        $sql = "SELECT * FROM tbl_orders  WHERE customerId=$CustomerId $where ORDER BY tbl_orders.adddate DESC ";
+        $db = dbConn();
+        $results = $db->query($sql);
 
-</div>
-</div>
+//        }
+        ?>
 
-<!-- Checkout page content end -->
+        <div class="container">
+            <table class="table table-striped table-sm">
+                <thead>
+                    <tr>
 
-<script>
-    function updateDeliveryCost() {
-        const selectElement = document.getElementById('courier_district');
-        const selectedOption = selectElement.options[selectElement.selectedIndex];
-        const deliveryCost = parseFloat(selectedOption.getAttribute('data-cost'));
-        const courierCostElement = document.getElementById('courier_cost');
-        const totalPaymentElement = document.getElementById('total_payment');
+                        <th>#</th>
+                        <th>Order Id</th>
+                        <th>Purchased Date</th>
 
-        courierCostElement.textContent = `Rs. ${deliveryCost.toFixed(2)}`;
+                        <th>Total Amount</th>
+                        <th>Total Quantity</th>
+                        <th>Total Discount</th>
+                        <th>Payment method</th>
+                        <th>Payment Status</th>
+                        <th>View Order</th>
+                        <th>Order Status</th>
 
-        const netTotalAfterCoupon = <?= $net_total_after_coupon ?>;
-        const totalPayment = netTotalAfterCoupon + deliveryCost;
-        totalPaymentElement.textContent = `Rs. ${totalPayment.toFixed(2)}`;
-    }
+                        <th>Cancellation availability</th>
+<!--                            <th>Cumalative Total</th>-->
 
-    // Call the function once to initialize the values if a district is already selected
-    updateDeliveryCost();
-</script>
 
-<?php
-include 'footer.php';
-ob_end_flush();
-?>
+
+
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php
+                    if ($results->num_rows > 0) {
+                        $i = 1;
+                        while ($row = $results->fetch_assoc()) {
+                            ?>
+                            <tr>
+
+                                <td><?= $i ?></td>
+                                <td><?= $row['orderID'] ?></td>
+                                <td><?= $row['adddate'] ?></td>
+
+                                <td ><?= number_format($row['grandtotal'], 2) ?></td>
+                                <td ><?= $row['totalquantity'] ?> Products</td>
+                                <td><?= number_format($row['totaldiscount'], 2) ?></td>
+                                <td><?= $row['payementmethod'] ?></td>
+                                <td>Paid not paid</td>
+
+
+                                <td >
+                                    <form action="vieworder.php" method="POST">
+                                        <input type="hidden" name="orderID" value="<?= $row['orderID'] ?>">
+                                        <button class="form-control btn btn-outline-primary btn-sm " style="border-color: blue" type="submit" name="action" value="vieworder"><strong> View Order </strong></button>
+                                    </form>
+
+                                </td>
+
+
+
+                                <td > <?php
+                                    if
+                                    ($row['orderstatus'] == 0) {
+                                        ?>
+                                        <div class="p-2 text-center" style="background-color: #ff6666;"><strong>Not Proccessed</strong> </div> <?php
+                                    } else if ($row['orderstatus'] == 1) {
+                                        ?>
+                                        <div class="p-2 text-center" style="background-color: #ffff99"> <strong>Proccessing</strong></div> <?php
+                                    } else if ($row['orderstatus'] == 2) {
+                                        ?>
+                                        <div class="p-2 text-center" style="background-color: #9999ff"> <strong>Packed</strong></div> <?php
+                                    } else if ($row['orderstatus'] == 3) {
+                                        ?>
+                                        <div class="p-2 text-center" style="background-color: #99ffff"> <strong>Handed to deliver</strong></div> <?php
+                                    } else if ($row['orderstatus'] == 4) {
+                                        ?>
+                                        <div class="p-2 text-center" style="background-color: #009966"><strong>Delivered</strong>  </div> <?php
+                                    } else if ($row['orderstatus'] == 5) {
+                                        ?>
+                                        <div class="p-2 text-center" style="background-color: #cc0033"> <strong>Cancelled</strong> </div> <?php
+                                    }
+                                    ?></td> 
+
+
+
+
+                                <?php
+                                $currentdate = date('Ymd');
+                                $timestamp = strtotime($currentdate);
+                                $currentdatenumber = date('Ymd', $timestamp);
+
+                                $orderdate = $row ['adddate'];
+                                $timestamp = strtotime($orderdate);
+                                $orderdatenumber = date('Ymd', $timestamp);
+
+                                if (($currentdatenumber - $orderdatenumber) < 10) {
+                                    echo "Applicable";
+                                } else {
+                                    echo 'Not Applicable';
+                                }
+                                ?>
+
+
+
+                                <td><?php
+
+                                    if ($row['orderstatus'] == 0) {
+                                        ?>
+                                        <form action="orderstatus.php" method="POST" >
+                                            <input type='hidden' name='productid' value='<?= $row['productid'] ?>'>
+                                            <input type='hidden' name='orderID' value='<?= $row['orderID'] ?>'>
+                                            <input type='hidden' name='qty' value='<?= $row['qty'] ?>'>
+                                            <input type='hidden' name='customerid' value='<?= $_SESSION['CustomerId'] ?>'>
+                                            <button name="action" class="btn btn-outline-danger " value="view"><strong>Cancel </strong> </button>
+                                        </form><?php
+                                    } else {
+                                        echo "Time Exceeded";
+                                    }
+                                    ?>
+
+
+                                </td>
+     
+
+                            </tr>
+                            <?php
+                            $i++;
+                        }
+                    }
+                    ?>
+                </tbody>
+                <tr>
+                    <td colspan="10">Total of the delivered Orders</td> 
+                    <td >Rs.<?= number_format($total, 2) ?></td>
+                </tr>
+
+            </table>  
+        </div>
+        <form action="customerDashboard.php" method="POST">
+            <div class="row text-end">
+                <div class="col-md-10"></div>
+                <div class="col-md-2">
+                    <input type="hidden" name="CustomerId" value="<?= $_SESSION['CustomerId'] ?>">
+                    <button type="submit" name="action" value="updateprofile" class="btn btn-primary ">Back Dashboard</button>
+                </div>
+            </div>
+        </form>
+    </section>
+
+</main>
+<?php include '../footer.php'; ?> 

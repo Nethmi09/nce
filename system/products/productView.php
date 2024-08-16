@@ -92,17 +92,6 @@ extract($_GET);
                             <th style="width: 400px;">Description</th>
                             <td><?= $product['PDescription'] ?></td>
                         </tr>
-                        <tr>
-                            <th style="width: 400px;">Warranty Period</th>
-                            <td><?= $product['Description'] ?></td>
-                        </tr>
-                        <tr>
-                            <th style="width: 400px;">Batch Number</th>
-                            <td><?= $product['Description'] ?></td>
-                        </tr>
-                        <tr>
-                            <th style="width: 400px;">Serial Number</th>
-                            <td><?= $product['Description'] ?></td>
                         </tr>
 
                     </tbody>

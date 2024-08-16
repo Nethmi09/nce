@@ -6,6 +6,7 @@ $link = "Supplier Management";
 $breadcrumb_item = "Supplier";
 $breadcrumb_item_active = "Manage";
 ?> 
+
 <?php
 extract($_POST);
 if ($_SERVER['REQUEST_METHOD'] == "POST" && @$action == 'update') {
@@ -23,8 +24,6 @@ if ($_SERVER['REQUEST_METHOD'] == "POST" && @$action == 'update') {
             <div class="card-header">
                 <h3 class="card-title">Supplier Details Table</h3>
             </div>
-
-
             <div class="card-body">
 
                 <?php
@@ -34,7 +33,7 @@ if ($_SERVER['REQUEST_METHOD'] == "POST" && @$action == 'update') {
                 ?>
                 <!--Table Start-->
 
-                <table id="datatable" class="table table-bordered table-striped">
+                <table id="" class="table table-bordered table-striped">
                     <thead>
                         <tr>
                             <th>Supplier ID</th>
@@ -108,7 +107,7 @@ if ($_SERVER['REQUEST_METHOD'] == "POST" && @$action == 'update') {
                                     <td>
                                         <a href="<?= SYS_URL ?>suppliers/view.php?supplierid=<?= $row['SupplierId'] ?>" class="btn btn-info"><i class="fas fa-eye"></i></a>
                                         <a href="<?= SYS_URL ?>suppliers/edit.php?supplierid=<?= $row['SupplierId'] ?>" class="btn btn-warning"><i class="fas fa-edit"></i></a>
-                                        <a href="<?= SYS_URL ?>suppliers/delete.php?supplierid=<?= $row['SupplierId'] ?>" class="btn btn-danger" onclick="return confirmDelete()"><i class="fas fa-trash"></i></a>
+<!--                                        <a href="<?= SYS_URL ?>suppliers/delete.php?supplierid=<?= $row['SupplierId'] ?>" class="btn btn-danger" onclick="return confirmDelete()"><i class="fas fa-trash"></i></a>-->
                                     </td>
                                 </tr>
 

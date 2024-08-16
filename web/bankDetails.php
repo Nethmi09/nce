@@ -29,7 +29,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && @$action == 'upload') {
     }
 
 
-
     if ($_FILES['payment_slip']['name'] != "") {
         $productimage = $_FILES['payment_slip'];
         $filename = $productimage['name'];
@@ -67,29 +66,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && @$action == 'upload') {
         }
     }
 
-    // File upload handling
-//    $payment_slip = '';
-//    if (!empty($_FILES['payment_slip']['name'])) {
-//        $uploadDir = '../assets/dist/img/uploads/payments/';
-//        $uploadFile = $uploadDir . basename($_FILES['payment_slip']['name']);
-//
-//        // Check if file type is an image
-//        $imageFileType = strtolower(pathinfo($uploadFile, PATHINFO_EXTENSION));
-//        $allowedExtensions = array("jpg", "jpeg", "png");
-//        if (!in_array($imageFileType, $allowedExtensions)) {
-//            $message['payment_slip'] = "Sorry, only JPG, JPEG & PNG files are allowed.";
-//        }
-//
-//        // Check file size
-//        if ($_FILES['payment_slip']['size'] > 5000000) { // 5 MB (you can adjust this limit)
-//            $message['payment_slip'] = "Sorry, your file is too large.";
-//        }
-//        // Check if file was uploaded without errors
-//        if (move_uploaded_file($_FILES['payment_slip']['tmp_name'], $uploadFile)) {
-//            $payment_slip = basename($_FILES['payment_slip']['name']);
-//        }
-//    }
-    print_r($message);
     if (empty($message)) {
         $db = dbConn();
         $sql1 = "SELECT * FROM orders WHERE OrderId='$order_number'";
@@ -98,11 +74,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && @$action == 'upload') {
         $cusId = $row['CustomerId'];
         $ordId = $row['OrderId'];
         $payMethod = $row['PaymentMethod'];
-        $payAmount = $row['PaymentAmount'];
+        $totalAmount = $row['TotalAmount'];
 
-        echo $sql = "INSERT INTO customer_payments (CustomerId, OrderId, PaymentMethod, PaymentAmount, UploadedSlip, Date, Status) VALUES ('$cusId','$ordId','$payMethod','$payAmount','$file_name_new','$payment_date','1')";
+        $sql = "INSERT INTO customer_payments (`CustomerId`, `OrderId`, `TotalAmount`, `PaymentMethod`, `PaidAmount`, `DueAmount`, `UploadedSlip`, `PaymentDate`, `Status`) VALUES ('$cusId','$ordId','$totalAmount','$payMethod',null,null,'$file_name_new','$payment_date','1')";
         $db->query($sql);
-        echo $updatesql1 = "UPDATE orders SET PaymentSlip ='$file_name_new' WHERE OrderId = '$order_number'";
+        $updatesql1 = "UPDATE orders SET PaymentSlip ='$file_name_new' WHERE OrderId = '$order_number'";
         $db->query($updatesql1);
 
         header("Location:order_success.php");

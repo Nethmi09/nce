@@ -72,9 +72,6 @@ $breadcrumb_item_active = "Manage";
                             <th>Quantity</th>
                             <th>Purchase Date</th>
                             <th>Supplier Name</th>
-
-  <!--<th>Status</th>-->
-                            <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -91,11 +88,6 @@ $breadcrumb_item_active = "Manage";
                                     <td><?= $row['PurchaseDate'] ?></td> 
                                     <td><?= $row['SupCompanyName'] ?></td> 
 
-                                    <td>
-                                        <a href="<?= SYS_URL ?>inventory/view.php?stockid=<?= $row['StockId'] ?>" class="btn btn-info"><i class="fas fa-eye"></i></a>
-                                        <a href="<?= SYS_URL ?>inventory/edit.php?stockid=<?= $row['StockId'] ?>" class="btn btn-warning"><i class="fas fa-edit"></i></a>
-                                        <a href="<?= SYS_URL ?>inventory/delete.php?stockid=<?= $row['StockId'] ?>" class="btn btn-danger" onclick="return confirmDelete()"><i class="fas fa-trash"></i></a>
-                                    </td>
                                 </tr>
 
                                 <?php

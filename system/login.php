@@ -105,7 +105,7 @@ if (isset($_SESSION['FIRSTNAME']) && $_SESSION['FIRSTNAME']) {
                             $password;
                             if (password_verify($password, $row['Password'])) {
                                 $_SESSION['USERID'] = $row['UserId'];
-                                $loguserid = $_SESSION['USERID'];
+                                // $loguserid = $_SESSION['USERID'];
                                 $_SESSION['FIRSTNAME'] = $row['FirstName'];
                                 $_SESSION['LASTNAME'] = $row['LastName'];
                                 $_SESSION['ROLE'] = $row['Role'];
@@ -144,7 +144,7 @@ if (isset($_SESSION['FIRSTNAME']) && $_SESSION['FIRSTNAME']) {
                         </div>
                     </div>
                     <div class="forgot-password">
-                        <a href="forgot_password.html">Forgot your password?</a>
+                        <a href="forgot_password.php">Forgot your password?</a>
                     </div>
                 </form>
 

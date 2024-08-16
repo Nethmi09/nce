@@ -1,85 +1,71 @@
-<?php
-ob_start();
-include_once '../init.php'; // Include initialization script for database connection and other settings
 
-$link = "Brand Management";
-$breadcrumb_item = "Brand";
-$breadcrumb_item_active = "View";
 
-// Extract Brand ID from the GET request
-extract($_GET);
+                    <div class="col md-6">
+                        <div class="card card-info">
+                            <div class="card-header">
+                                <h3 class="card-title">Payment History</h3>
+                            </div>
 
-?>
+                            <div class="card-body">
 
-<div class="row">
-    <div class="col-12">
-        <a href="<?= SYS_URL ?>products/brandManage.php" class="btn btn-dark mb-4"><i class="fas fa-arrow-left"></i> Back to Brands Listing Table</a>
-        <div class="card">
-            <div class="card-header">
-                <h3 class="card-title">Brand Details</h3>
-            </div>
+                                <?php
+                                extract($_POST);
+                                extract($_GET);
+                                $db = dbConn();
+                                
+                                $sql_orders = "SELECT o.OrderNumber,o.GrandTOTAL, o.Discount,o.NetTotal,o.DeliveryCost,o.TotalAmount, c.PaidAmount FROM orders o INNER JOIN customer_payments c ON c.OrderId=o.OrderId WHERE o.OrderId='$order_id'";
+                                $result_orders = $db->query($sql_orders);
+                                $roworders = $result_orders->fetch_assoc();
+                                
+                                $order_number = $roworders['OrderNumber'];
+                                $product_total = $roworders['GrandTOTAL'];
+                                $discount = $roworders['Discount'];
+                                $net_amount = $roworders['NetTotal'];
+                                $delivery_charge = $roworders['DeliveryCost'];
+                                $total_amount = $roworders['TotalAmount'];
+                                
+                                
+                                $pay_amount = $roworders['PaidAmount'];
+                                ?>
+                                <form action="<?= htmlspecialchars($_SERVER['PHP_SELF']); ?>" method="POST">
+                                    <table class="table table-bordered">
+                                        <tbody>
+                                            <tr>
+                                                <th scope="row">Order Number</th>
+                                                <td><?= $order_number ?></td>
+                                            </tr>
+                                            <tr>
+                                                <th scope="row">Products Total</th>
+                                                <td><?= $product_total ?></td>
+                                            </tr>
+                                            <tr>
+                                                <th scope="row">Discount</th>
+                                                <td>Rs. <?= number_format($discount, 2) ?></td>
+                                            </tr>
+                                            <tr>
+                                                <th scope="row">Net Amount</th>
+                                                <td>Rs. <?= number_format($net_amount, 2) ?></td>
+                                            </tr>
+                                            <tr>
+                                                <th scope="row">Delivery Charge</th>
+                                                <td>Rs. <?= number_format($delivery_charge, 2) ?></td>
+                                            </tr>
+                                            <tr>
+                                                <th scope="row">Total Amount</th>
+                                                <td>Rs. <?= number_format($total_amount, 2) ?></td>
+                                            </tr>
 
-            <div class="card-body">
-                <?php
-                // Establish database connection
-                $db = dbConn();
-                
-                // Query to retrieve brand details including main category name
-                $sql = "SELECT BrandId, BrandImage, BrandName, BDescription, m.MainCategoryName 
-                        FROM brands b 
-                        INNER JOIN main_categories m 
-                        ON m.MainCategoryId = b.MainCategoryId 
-                        WHERE b.BrandID = '$brandid'";
-                $result = $db->query($sql);
+                                            <tr>
+                                                <th scope="row">Paid Amount</th>
+                                                <td>Rs. <?= number_format($pay_amount, 2) ?></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
 
-                // Check if the query returned a result
-                if ($result && $result->num_rows > 0) {
-                    // Fetch the brand details
-                    $brand = $result->fetch_assoc();
-                } else {
-                    echo "Brand not found.";
-                    exit;
-                }
-                ?>
+                                    <input type="submit" action="submit" value="Confirm Payment" class="btn btn-success">
+                                </form>
 
-                <!-- Brand Details Table Start -->
-                <table class="table table-bordered">
-                    <tbody>
-                        <tr>
-                            <th style="width: 400px;">Brand ID</th>
-                            <td><?= $brand['BrandId'] ?></td>
-                        </tr>
-                        <tr>
-                            <th style="width: 400px;">Brand Image</th>
-                            <td>
-                                <?php if (!empty($brand['BrandImage'])): ?>
-                                    <img src="../assets/dist/img/uploads/brands/<?= $brand['BrandImage'] ?>" class="img-square elevation-2" width="100">
-                                <?php else: ?>
-                                    <img src="../assets/dist/img/default-image.png" class="img-square elevation-2" width="100">
-                                <?php endif; ?>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th style="width: 400px;">Brand Name</th>
-                            <td><?= $brand['BrandName'] ?></td>
-                        </tr>
-                        <tr>
-                            <th style="width: 400px;">Description</th>
-                            <td><?= $brand['BDescription'] ?></td>
-                        </tr>
-                        <tr>
-                            <th style="width: 400px;">Main Category Name</th>
-                            <td><?= $brand['MainCategoryName'] ?></td>
-                        </tr>
-                    </tbody>
-                </table>
-                <!-- Brand Details Table End -->
-            </div>
-        </div>
-    </div>
-</div>
+                            </div>
 
-<?php
-$content = ob_get_clean(); // Capture the output buffer content
-include '../layouts.php'; // Include the layout for the page
-?>
+                        </div>
+                    </div>

@@ -66,7 +66,7 @@ $breadcrumb_item_active = "Manage";
                                     <td><?= $row['DeliverDate'] ?></td>
                                     <td><?= $row['FinalUpdateDate'] ?></td>
                                     <td><?= $row['Token'] ?></td>
-                                    <td><a href="<?= SYS_URL ?>purchases/view_quote.php?token=<?= $row['Token'] ?>" class="btn btn-info"><i class="fas fa-eye"></i></a></td>
+                                    <td><a href="<?= SYS_URL ?>purchases/quotationView.php?token=<?= $row['Token'] ?>" class="btn btn-info"><i class="fas fa-eye"></i></a></td>
                                 </tr>
                                 <?php
                             }

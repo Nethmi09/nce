@@ -108,7 +108,7 @@ if ($_SERVER['REQUEST_METHOD'] == "POST" && @$action == 'update') {
                                         <a href="<?= SYS_URL ?>products/mainCategoryView.php?maincategoryid=<?= $row['MainCategoryId'] ?>" class="btn btn-info"><i class="fas fa-eye"></i></a>
                                         <a href="<?= SYS_URL ?>products/mainCategoryEdit.php?maincategoryid=<?= $row['MainCategoryId'] ?>" class="btn btn-warning"><i class="fas fa-edit"></i></a>
                                          <!-- Calls the confirmDelete() function to confirm the deletion of a category when the button is clicked -->
-                                        <a href="<?= SYS_URL ?>products/mainCategoryDelete.php?maincategoryid=<?= $row['MainCategoryId'] ?>" class="btn btn-danger" onclick="return confirmDelete()"><i class="fas fa-trash"></i></a>
+<!--                                        <a href="<?= SYS_URL ?>products/mainCategoryDelete.php?maincategoryid=<?= $row['MainCategoryId'] ?>" class="btn btn-danger" onclick="return confirmDelete()"><i class="fas fa-trash"></i></a>-->
                                     </td>
                                 </tr>
 

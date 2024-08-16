@@ -43,7 +43,7 @@ $breadcrumb_item_active = "Manage";
                                       <td><?= $row['Description'] ?></td> 
                                     <td>
                                          <a href="<?= SYS_URL ?>users/roleEdit.php?roleid=<?= $row['Id'] ?>" class="btn btn-warning"><i class="fas fa-edit"></i></a>
-                                        <a href="<?= SYS_URL ?>users/roleDelete.php?roleid=<?= $row['Id'] ?>" class="btn btn-danger" onclick="return confirmDelete()"><i class="fas fa-trash"></i></a>
+<!--                                        <a href="<?= SYS_URL ?>users/roleDelete.php?roleid=<?= $row['Id'] ?>" class="btn btn-danger" onclick="return confirmDelete()"><i class="fas fa-trash"></i></a>-->
                                     </td>
                                 </tr>
 

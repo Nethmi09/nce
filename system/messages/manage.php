@@ -8,7 +8,7 @@ $breadcrumb_item_active = "Manage";
 ?> 
 <div class="row">
     <div class="col-12">
-        
+
         <div class="card mt">
             <div class="card-header">
                 <h3 class="card-title">Messages Details Table</h3>
@@ -17,7 +17,7 @@ $breadcrumb_item_active = "Manage";
             <div class="card-body">
                 <?php
                 $db = dbConn();
-                $sql = "SELECT * FROM contactus_messages ";
+                $sql = "SELECT * FROM contactus_messages ORDER BY contactus_messages.Id DESC";
                 $result = $db->query($sql);
                 ?>
 
@@ -26,7 +26,7 @@ $breadcrumb_item_active = "Manage";
                 <table id="" class="table table-bordered table-striped">
                     <thead>
                         <tr>
-                            <th>ID</th>
+                            <th>#</th>
                             <th>Name</th>
                             <th>Email</th>
                             <th>Message</th>  
@@ -37,21 +37,23 @@ $breadcrumb_item_active = "Manage";
                     <tbody>
                         <?php
                         if ($result->num_rows > 0) {
+                             $i = 1;
                             while ($row = $result->fetch_assoc()) {
                                 ?>
                                 <tr>
-                                    <td><?= $row['Id'] ?></td> 
+                                   <td><?= $i ?></td>
                                     <td><?= $row['Name'] ?></td> 
-                                      <td><?= $row['Email'] ?></td> 
+                                    <td><?= $row['Email'] ?></td> 
                                     <td><?= $row['Message'] ?></td> 
-                                      <td><?= $row['SubmittedAt'] ?></td> 
+                                    <td><?= $row['SubmittedAt'] ?></td> 
                                     <td>
                                         <a href="<?= SYS_URL ?>messages/view.php?messageid=<?= $row['Id'] ?>" class="btn btn-info"><i class="fas fa-eye"></i></a>
-                                        <a href="<?= SYS_URL ?>messages/delete.php?messageid=<?= $row['Id'] ?>" class="btn btn-danger" onclick="return confirmDelete()"><i class="fas fa-trash"></i></a>
+        <!--                                        <a href="<?= SYS_URL ?>messages/delete.php?messageid=<?= $row['Id'] ?>" class="btn btn-danger" onclick="return confirmDelete()"><i class="fas fa-trash"></i></a>-->
                                     </td>
                                 </tr>
 
                                 <?php
+                                  $i++;
                             }
                         }
                         ?>

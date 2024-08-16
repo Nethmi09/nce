@@ -79,7 +79,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $message['shipping_district'] = "Shipping District is required...!";
     }
 
-    print_r($message);
 
     if (empty($message)) {
         $db = dbConn();
@@ -89,28 +88,42 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $result = $db->query($sql);
         $row = $result->fetch_assoc();
         $customerid = $row['CustomerId'];
+       
         $order_date = date('Y-m-d');
         $order_number = date('YmdHis');
+        
 
         $grandTotal = $_SESSION['grand_total'];
-        $disCount = $_SESSION['discount'];
+        
+        if (isset( $_SESSION['COUPONID'])) {
+            $coupon_id= $_SESSION['COUPONID'];
+
+        }else{
+            $coupan_id= 0;
+        }
+        if (isset(  $_SESSION['Discount'])) {
+            $discount= $_SESSION['Discount'];
+
+        }else{
+            $discount= 0;
+        }
+        
+        $disCount = $_SESSION['Discount'];
         $netTOtal = $_SESSION['netTotal'];
         $proFit = $_SESSION['profit'];
         $quanTity = $_SESSION['quantity'];
-        $couponDiscount = $_SESSION['coupon'];
-        $netTotalAfterCouponDiscount = $_SESSION['netAfterCD'];
         
         
         //add orders into order table
         echo $sql = "INSERT INTO orders(OrderNumber, OrderDate, CustomerId, PersonalName, PersonalEmail, PersonalContactMobile,"
         . " PersonalAlternateMobile, PersonalAddressLine1, PersonalAddressLine2, PersonalCity, PersonalDistrictId, ShippingName, "
         . "ShippingEmail, ShippingContactMobile, ShippingAlternateMobile, ShippingAddressLine1, ShippingAddressLine2, "
-        . "ShippingCity, ShippingDistrictId, GrandTOTAL, Discount, NetTotal,CouponDiscount,NetTtAftCD, Quantity, OrderStatus, Profit) "
+        . "ShippingCity, ShippingDistrictId, GrandTOTAL, Discount, NetTotal,Quantity, OrderStatus, Profit, UserId ) "
         . "VALUES ('$order_number','$order_date','$customerid','$personal_name','$personal_email',"
         . "'$personal_contact_mobile','$personal_alt_mobile','$personal_address_line_1','$personal_address_line_2',"
         . "'$personal_city','$personal_district','$shipping_name','$shipping_email','$shipping_contact_mobile',"
         . "'$shipping_alt_mobile','$shipping_address_line_1','$shipping_address_line_2','$shipping_city',"
-        . "'$shipping_district','$grandTotal','$disCount','$netTOtal','$couponDiscount','$netTotalAfterCouponDiscount','$quanTity','0','$proFit')";
+        . "'$shipping_district','$grandTotal','$disCount','$netTOtal','$quanTity','1','$proFit','$userid')";
         $db->query($sql);
 
         $OrderId = $db->insert_id;

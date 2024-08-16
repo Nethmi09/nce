@@ -9,11 +9,11 @@ $breadcrumb_item_active = "Manage";
 
  <div class="col text-right">
     <div class="btn-group" role="group">       
-        <a href="<?= SYS_URL ?>batchNumber/manage.php" class="btn btn-primary mr-2">Manage Batch Numbers</a>
-        <a href="<?= SYS_URL ?>serialNumber/manage.php" class="btn btn-secondary mr-2">Manage Serial Numbers</a>
+<!--        <a href="<?= SYS_URL ?>batchNumber/manage.php" class="btn btn-primary mr-2">Manage Batch Numbers</a>-->
+<!--        <a href="<?= SYS_URL ?>serialNumber/manage.php" class="btn btn-secondary mr-2">Manage Serial Numbers</a>-->
          <a href="<?= SYS_URL ?>colors/manage.php" class="btn btn-success mr-2">Manage Colors</a>
         <a href="<?= SYS_URL ?>coupons/manage.php" class="btn btn-info mr-2">Manage Coupon Codes</a>
-        <a href="<?= SYS_URL ?>warranty/manage.php" class="btn btn-dark">Manage Warranty Periods</a>
+<!--        <a href="<?= SYS_URL ?>warranty/manage.php" class="btn btn-dark">Manage Warranty Periods</a>-->
     </div>
 </div>
 
@@ -52,7 +52,6 @@ $breadcrumb_item_active = "Manage";
                             <th>Supplier</th>
                             <th>Purchase Price(LKR)</th>
                             <th>Selling Price(LKR)</th>
-                              <th>Quantity</th>
                             <th>Action</th>
 
                         </tr>
@@ -77,12 +76,11 @@ $breadcrumb_item_active = "Manage";
                                      <td><?= $row['BrandName'] ?></td> 
                                     <td><?= $row['SupCompanyName'] ?></td> 
                                     <td><?= $row['PurchasePrice'] ?></td> 
-                                    <td><?= $row['SellingPrice'] ?></td> 
-                                       <td><?= $row['Quantity'] ?></td> 
+                                    <td><?= $row['SellingPrice'] ?></td>
                                     <td>
                                         <a href="<?= SYS_URL ?>products/productView.php?productid=<?= $row['ProductId'] ?>" class="btn btn-info"><i class="fas fa-eye"></i></a>
                                         <a href="<?= SYS_URL ?>products/productEdit.php?productid=<?= $row['ProductId'] ?>" class="btn btn-warning"><i class="fas fa-edit"></i></a>
-                                        <a href="<?= SYS_URL ?>products/productDelete.php?productid=<?= $row['ProductId'] ?>" class="btn btn-danger" onclick="return confirmDelete()"><i class="fas fa-trash"></i></a>
+<!--                                        <a href="<?= SYS_URL ?>products/productDelete.php?productid=<?= $row['ProductId'] ?>" class="btn btn-danger" onclick="return confirmDelete()"><i class="fas fa-trash"></i></a>-->
                                     </td>
                                   
                                 </tr>

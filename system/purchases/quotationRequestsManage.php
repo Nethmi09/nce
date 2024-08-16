@@ -49,7 +49,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             <th>Required Date</th>
                             <th>Product Name</th>
                             <th>Quantity</th>
-                            <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -64,7 +63,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                     <td><?= $row['DeliverDate'] ?></td>
                                     <td><?= $row['ProductName'] ?></td>
                                     <td><?= $row['Qty'] ?></td>
-                                    <td><a href="<?= SYS_URL ?>send_quote.php?date=<?= $row['RequestDate'] ?>" class="btn btn-info">Send Price Request</a></td>
                                 </tr>
                                 <?php
                             }

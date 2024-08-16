@@ -19,7 +19,7 @@ $breadcrumb_item_active = "Manage";
             <div class="card-body">
                 <?php
                 $db = dbConn();
-                $sql = "SELECT EmployeeId,RegistrationNumber, CONCAT(FirstName, ' ', LastName) AS EmployeeName, "
+                $sql = "SELECT EmployeeId,CONCAT(FirstName, ' ', LastName) AS EmployeeName, "
                         . "d.DesignationName, s.EmployeeStatusName, ContactMobile, HireDate FROM employees e "
                         . "INNER JOIN designations d ON d.DesignationId=e.DesignationId "
                         . "INNER JOIN employee_status s ON s.EmployeeStatusId=e.EmployeeStatusId";
@@ -31,7 +31,6 @@ $breadcrumb_item_active = "Manage";
                     <thead>
                         <tr>
                             <th>ID</th>
-                            <th>Registration Number</th>
                             <th>Employee Name</th>
                             <th>Contact Mobile</th>
                             <th>Designation</th>
@@ -49,16 +48,15 @@ $breadcrumb_item_active = "Manage";
                                 ?>
                                 <tr>
                                     <td><?= $row['EmployeeId'] ?></td>
-                                    <td><?= $row['RegistrationNumber'] ?></td> 
                                     <td><?= $row['EmployeeName'] ?></td> 
                                     <td><?= $row['ContactMobile'] ?></td> 
                                     <td><?= $row['DesignationName'] ?></td> 
                                     <td><?= $row['HireDate'] ?></td> 
-                                   <td class="<?= $statusClass ?>" style="font-weight: bold;"><?= $row['EmployeeStatusName'] ?></td> 
+                                    <td class="<?= $statusClass ?>" style="font-weight: bold;"><?= $row['EmployeeStatusName'] ?></td> 
                                     <td>
                                         <a href="<?= SYS_URL ?>employees/view.php?employeeid=<?= $row['EmployeeId'] ?>" class="btn btn-info"><i class="fas fa-eye"></i></a>
                                         <a href="<?= SYS_URL ?>employees/edit.php?employeeid=<?= $row['EmployeeId'] ?>" class="btn btn-warning"><i class="fas fa-edit"></i></a>
-                                        <a href="<?= SYS_URL ?>employees/delete.php?employeeid=<?= $row['EmployeeId'] ?>" class="btn btn-danger" onclick="return confirmDelete()"><i class="fas fa-trash"></i></a>
+<!--                                        <a href="<?= SYS_URL ?>employees/delete.php?employeeid=<?= $row['EmployeeId'] ?>" class="btn btn-danger" onclick="return confirmDelete()"><i class="fas fa-trash"></i></a>-->
                                     </td>
                                 </tr>
 

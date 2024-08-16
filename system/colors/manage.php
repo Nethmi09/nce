@@ -21,6 +21,8 @@ if ($_SERVER['REQUEST_METHOD'] == "POST" && @$action == 'update') {
 
 <div class="row">
     <div class="col-12">
+         <a href="<?= SYS_URL ?>products/productManage.php" class="btn btn-dark mb-4"><i class="fas fa-arrow-left"></i> Back to Products Listing Table</a>
+         <br>
         <a href="<?= SYS_URL ?>colors/add.php" class="btn btn-dark mb-4"><i class="fas fa-plus-circle"></i> Add New Color</a>
         <div class="card mt">
             <div class="card-header">
@@ -44,7 +46,6 @@ if ($_SERVER['REQUEST_METHOD'] == "POST" && @$action == 'update') {
                             <th>Color Code</th>
                             <th>Status</th>
                             <th>Set Activation Status</th>
-                            <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -105,10 +106,6 @@ if ($_SERVER['REQUEST_METHOD'] == "POST" && @$action == 'update') {
                                             <?php
                                         }
                                         ?>
-                                    </td>
-                                    <td>
-                                        <!-- Display buttons for editing, and deleting a color -->
-                                        <a href="<?= SYS_URL ?>colors/delete.php?colorid=<?= $row['ColorId'] ?>" class="btn btn-danger" onclick="return confirmDelete()"><i class="fas fa-trash"></i></a>
                                     </td>
                                 </tr>
 

@@ -24,7 +24,7 @@ $breadcrumb_item_active = "Manage";
 
                 <!--Table Start-->
 
-                <table id="datatable" class="table table-bordered table-striped">
+                <table id="" class="table table-bordered table-striped">
                     <thead>
                         <tr>
                             <th>ID</th>

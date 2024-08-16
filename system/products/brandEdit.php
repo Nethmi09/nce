@@ -7,34 +7,32 @@ $breadcrumb_item = "Brand";
 $breadcrumb_item_active = "Update";
 
 if ($_SERVER['REQUEST_METHOD'] == 'GET') {
-   // Handle GET request to fetch brand details based on the categoryid from the URL
+    // Handle GET request to fetch brand details based on the categoryid from the URL
     extract($_GET);
     $db = dbConn();
     $sql = "SELECT BrandId, BrandImage, BrandName, BDescription, MainCategoryId FROM brands WHERE BrandId='$brandid'";
     $result = $db->query($sql);
     $row = $result->fetch_assoc();
 
-     // Assign fetched brand details to variables
+    // Assign fetched brand details to variables
     $brand_name = $row['BrandName'];
     $description = $row['BDescription'];
     $main_category_id = $row['MainCategoryId'];
     $brand_image = $row['BrandImage'];
     $BrandId = $row['BrandId'];
-      
 }
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-     // Handle POST request to update brand details
+    // Handle POST request to update brand details
     extract($_POST);
-     // Clean input data
+    // Clean input data
     $brand_name = dataClean($brand_name);
     $description = dataClean($description);
-    $main_category = dataClean($main_category);
 
-     //Initialize an array to hold error messages
+    //Initialize an array to hold error messages
     $message = array();
 
-     //Required Validations
+    //Required Validations
     if (empty($brand_name)) {
         $message['brand_name'] = "Brand Name is required.";
     }
@@ -54,9 +52,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
     }
 
-  $new_brand_image = $brand_image;
- if (!empty($_FILES['brand_image']['name'])){
-     $uploadDir = '../assets/dist/img/uploads/brands/';
+    $brand_image = '';
+
+    $new_brand_image = $brand_image;
+    if (!empty($_FILES['brand_image']['name'])) {
+        $uploadDir = '../assets/dist/img/uploads/brands/';
         $uploadFile = $uploadDir . basename($_FILES['brand_image']['name']);
 
         $imageFileType = strtolower(pathinfo($uploadFile, PATHINFO_EXTENSION));
@@ -66,12 +66,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }if ($_FILES['brand_image']['size'] > 5000000) { // 5 MB
             $message['brand_image'] = "Your file is too large.";
         }
-        if(empty($message['brand_image']) && move_uploaded_file($_FILES['brand_image']['tmp_name'], $uploadFile)){
+        if (empty($message['brand_image']) && move_uploaded_file($_FILES['brand_image']['tmp_name'], $uploadFile)) {
             $new_brand_image = basename($_FILES['brand_image']['name']);
         }
- }else{
-     $new_brand_image = $prv_brand_image;
- }
+    } else {
+        $new_brand_image = $prv_brand_image;
+    }
 
     if (empty($message)) {
         $db = dbConn();
@@ -136,7 +136,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         <?php if ($brand_image): ?>
                             <img src="../assets/dist/img/uploads/brands/<?= $brand_image ?>" alt="Brand Logo" style="max-width: 100px;">
                         <?php endif; ?>
-                            <input type="hidden" name="prv_brand_image" value="<?= @$brand_image ?>">
+                        <input type="hidden" name="prv_brand_image" value="<?= @$brand_image ?>">
                     </div>
                 </div>
 
