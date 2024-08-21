@@ -9,8 +9,8 @@ $link = "Purchase Management";
 $breadcrumb_item1 = "Quotation";
 $breadcrumb_item2 = "Manage_quote";
 
-$invoice = $_SESSION['INVOICE'];
-$total = $_SESSION['TOTAL'];
+//$invoice = $_SESSION['INVOICE'];
+//$total = $_SESSION['TOTAL'];
 
 ?>
 

@@ -101,12 +101,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <div class="row">
 
     <div class="col-12">
-
+  <a href="<?= SYS_URL ?>suppliers/manage.php" class="btn btn-dark mb-4"><i class="fas fa-arrow-left"></i> Back to Supplier Listing Table</a>
         <!--Card Start-->
 
         <div class="card">
             <div class="card-header">
-                <h3 class="card-title">Add New Supplier</h3>
+                <h3 class="card-title">Update Supplier</h3>
             </div>         
 
             <!--Form Start-->

@@ -136,7 +136,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 <div class="row">
     <div class="col-12">
-
+<a href="<?= SYS_URL ?>employees/manage.php" class="btn btn-dark mb-4"><i class="fas fa-arrow-left"></i> Back to Employees Listing Table</a>
         <!--Card Start-->
 
         <div class="card">

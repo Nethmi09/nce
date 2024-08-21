@@ -43,8 +43,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $message['selling_price'] = "Selling Price is required.";
     }
 
-    if (empty($product_image)) {
-        $message['product_image'] = "Product Image is required.";
+    
+    if (empty($color)) {
+        $message['color'] = "Color is required.";
     }
 
 
@@ -52,12 +53,30 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     //    Advance validation    
     // File upload handling
     $product_image = '';
-    if (isset($_FILES['product_image'])) {
+    if (!empty($_FILES['product_image']['name'])) {
         $uploadDir = '../assets/dist/img/uploads/products/';
         $uploadFile = $uploadDir . basename($_FILES['product_image']['name']);
-        if (move_uploaded_file($_FILES['product_image']['tmp_name'], $uploadFile)) {
-            $product_image = basename($_FILES['product_image']['name']);
+
+        // Check if file type is an image
+        $imageFileType = strtolower(pathinfo($uploadFile, PATHINFO_EXTENSION));
+        $allowedExtensions = array("jpg", "jpeg", "png");
+        if (!in_array($imageFileType, $allowedExtensions)) {
+            $message['product_image'] = "Sorry, only JPG, JPEG & PNG files are allowed.";
         }
+
+        // Check file size
+        if ($_FILES['product_image']['size'] > 5000000) { // 5 MB
+            $message['product_image'] = "Sorry, your file is too large.";
+        }
+
+        // Check if file was uploaded without errors
+        if (empty($message['product_image']) && move_uploaded_file($_FILES['product_image']['tmp_name'], $uploadFile)) {
+            $product_image = basename($_FILES['product_image']['name']);
+        } else {
+            $message['product_image'] = "Sorry, there was an error uploading your file.";
+        }
+    } else {
+        $message['product_image'] = "Product Image is required.";
     }
 
     if (empty($message)) {
@@ -86,8 +105,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             echo '<br>';
         } else {
             //add the product in to products  table
-            $sql = "INSERT INTO products(ProductName, MainCategoryId , BrandID, CategoryId, SupplierId, ProductImage, PurchasePrice, SellingPrice, PDescription, Discount, DiscountStartDate, DiscountEndDate,Status,Quantity) "
-                    . "VALUES ('$product_name','$product_main_category','$product_brand','$product_category','$supplier','$product_image','$purchase_price','$selling_price','$description','$discount','$start_date','$end_date','1','1')";
+            $sql = "INSERT INTO products(ProductName, MainCategoryId , BrandID, CategoryId,ColorId, SupplierId, ProductImage, "
+                    . "PurchasePrice, SellingPrice, PDescription,PStatus,Quantity) "
+                    . "VALUES ('$product_name','$product_main_category','$product_brand','$product_category',"
+                    . "'$color','$supplier','$product_image','$purchase_price','$selling_price','$description','1','1')";
             $db->query($sql);
             $ProductID = $db->insert_id;
 
@@ -126,7 +147,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             <label for="product_main_category">Product Main Category<span style = "color : red"> * </span></label>
                             <?php
                             $db = dbConn();
-                            $sql = "SELECT * FROM  main_categories";
+                            $sql = "SELECT * FROM  main_categories WHERE Status=1";
                             $result = $db->query($sql);
                             ?>
                             <select name="product_main_category" id="product_main_category"  class="form-control select2 mb-1" value="<?= @$product_main_category ?>" aria-label="Large select example">
@@ -146,7 +167,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             <label for="product_category">Product Category<span style = "color : red"> * </span></label>
                             <?php
                             $db = dbConn();
-                            $sql = "SELECT * FROM  categories";
+                            $sql = "SELECT * FROM  categories WHERE Statuss=1";
                             $result = $db->query($sql);
                             ?>
                             <select name="product_category" id="product_category"  class="form-control select2 mb-1" value="<?= @$product_category ?>" aria-label="Large select example">
@@ -166,7 +187,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             <label for="product_brand">Product Brand<span style = "color : red"> * </span></label>
                             <?php
                             $db = dbConn();
-                            $sql = "SELECT * FROM  brands";
+                            $sql = "SELECT * FROM  brands WHERE BStatus=1";
                             $result = $db->query($sql);
                             ?>
                             <select name="product_brand" id="product_brand"  class="form-control select2 mb-1" value="<?= @$product_brand ?>" aria-label="Large select example">
@@ -186,14 +207,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                     </div>
 
-                    <!--Supplier, Purchase Price and Selling Price-->
+                    <!--Supplier, Purchase Price , Selling Price and color-->
 
                     <div class="row">
-                        <div class="form-group col-md-4">
+                        <div class="form-group col-md-3">
                             <label for="product_category">Supplier<span style = "color : red"> * </span></label>
                             <?php
                             $db = dbConn();
-                            $sql = "SELECT * FROM  suppliers";
+                            $sql = "SELECT * FROM  suppliers WHERE Status=1";
                             $result = $db->query($sql);
                             ?>
                             <select name="supplier" id="supplier"  class="form-control select2 mb-1" value="<?= @$supplier ?>" aria-label="Large select example">
@@ -208,15 +229,35 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             </select>
                             <span class="text-danger"><?= @$message['supplier'] ?></span>
                         </div>
-                        <div class="form-group col-md-4">
+                        <div class="form-group col-md-3">
                             <label for="purchase_price">Purchase Price(LKR)<span style = "color : red"> * </span></label>
                             <input type="text" name="purchase_price" class="form-control mb-1" id="purchase_price" value="<?= @$purchase_price ?>" placeholder="Enter Purchase Price">
                             <span class="text-danger"><?= @$message['purchase_price'] ?></span>
                         </div>
-                        <div class="form-group col-md-4">
+                        <div class="form-group col-md-3">
                             <label for="selling_price">Selling Price(LKR)<span style = "color : red"> * </span></label>
                             <input type="text" name="selling_price" class="form-control mb-1" id="selling_price" value="<?= @$selling_price ?>" placeholder="Enter Selling Price">
                             <span class="text-danger"><?= @$message['selling_price'] ?></span>
+                        </div>
+                        
+                         <div class="form-group col-md-3">
+                            <label for="color">Color<span style = "color : red"> * </span></label>
+                            <?php
+                            $db = dbConn();
+                            $sql = "SELECT * FROM  colors WHERE Status=1";
+                            $result = $db->query($sql);
+                            ?>
+                            <select name="color" id="color"  class="form-control select2 mb-1" value="<?= @$color ?>" aria-label="Large select example">
+                                <option value="" disabled selected>Select Color</option>
+                                <?php
+                                while ($row = $result->fetch_assoc()) {
+                                    ?>
+                                    <option value="<?= $row['ColorId'] ?>"><?= $row['ColorName'] ?></option>
+                                    <?php
+                                }
+                                ?>
+                            </select>
+                            <span class="text-danger"><?= @$message['supplier'] ?></span>
                         </div>
 
 
@@ -231,9 +272,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         </div>                      
                     </div>
 
-                    <!--Product Image and Warranty Period-->
+                    <!--Product Image-->
 
-                    <div class="row">
+                     <div class="row">
                         <div class="form-group col-md-12">
                             <label for="product_image">Product Image<span style = "color : red"> * </span></label>
                             <div class="input-group">
@@ -243,8 +284,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                 </div>
                             </div>
                         </div>
-
-
                     </div>
 
 

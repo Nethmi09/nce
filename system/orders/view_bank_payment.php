@@ -6,6 +6,24 @@ include_once '../init.php';
 $link = "Order Management";
 $breadcrumb_item = "Payment";
 $breadcrumb_item_active = "Manage";
+
+//$db = dbConn();
+
+// Check if the confirm button was clicked
+//if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['confirm'])) {
+    // Extract the order ID from the POST request
+    //$order_id = $_POST['order_id'];
+
+    // Update the order status to 9
+//    $update_order_status_sql = "UPDATE orders SET OrderStatus = 9 WHERE OrderId = '$order_id'";
+//
+//    if ($db->query($update_order_status_sql) === TRUE) {
+//        echo "<script>alert('Order confirmed successfully!');</script>";
+//    } else {
+//        echo "<script>alert('Error updating order status: " . $db->error . "');</script>";
+//        echo "SQL: " . $update_order_status_sql;
+//    }
+//}
 ?>
 
 <div class="row">
@@ -40,12 +58,12 @@ $breadcrumb_item_active = "Manage";
                                     $result_pay = $db->query($sql_pay);
                                     $rowpay = $result_pay->fetch_assoc();
                                     $TotalAmount = $rowpay['TotalAmount'];
-                                    
+
                                     $paidamnt = $rowpay['PaidAmount'];
 
                                     $PaidAmount = dataClean($PaidAmount);
-                                    
-                                    $paidamnt+=$PaidAmount;
+
+                                    $paidamnt += $PaidAmount;
 
                                     $sql = "UPDATE customer_payments SET PaidAmount=$paidamnt, DueAmount=$TotalAmount-$paidamnt WHERE OrderId='$order_id'";
                                     $db->query($sql);
@@ -127,6 +145,7 @@ $breadcrumb_item_active = "Manage";
                                 $total_amount = $roworders['TotalAmount'];
                                 $pay_amount = $roworders['PaidAmount'];
                                 $due_amount = $roworders['DueAmount'];
+                                $Status = $roworders['OrderStatus'];
                                 ?>
                                 <form action="<?= htmlspecialchars($_SERVER['PHP_SELF']); ?>" method="POST">
                                     <table class="table table-bordered">
@@ -167,8 +186,16 @@ $breadcrumb_item_active = "Manage";
                                         </tbody>
                                     </table>
 
-                                    <input type="submit" action="submit" value="Confirm Payment" class="btn btn-success">
+<!--                                    <input type="submit" action="submit" value="Confirm Payment" class="btn btn-success">-->
                                 </form>
+
+<!--                                <form action="order_confirmation.php" method="POST">
+
+                                    <input type='hidden' name='order_id' value='<?= $order_id ?>'>
+                                    <button type="submit" action="confirm" name="confirm" value="confirm" class="btn btn-success"
+                                            <?= $Status == '9' ? 'disabled' : '' ?>>Confirm Order</button>
+
+                                </form>-->
 
                             </div>
 

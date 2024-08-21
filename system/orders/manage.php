@@ -64,7 +64,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $_POST['action'] == 'accept') {
             <div class="card-body">
                 <?php                
                 $db = dbConn();
-                $sql = "SELECT o.*, c.FirstName, c.LastName FROM orders o INNER JOIN customers c ON c.CustomerId = o.CustomerId ";
+                $sql = "SELECT o.*, c.FirstName, c.LastName FROM orders o INNER JOIN customers c ON c.CustomerId = o.CustomerId ORDER BY `OrderId` DESC";
                 $result = $db->query($sql);
                 ?>
                 <!--Table Start-->

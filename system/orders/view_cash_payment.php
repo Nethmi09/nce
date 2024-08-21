@@ -141,7 +141,11 @@ $breadcrumb_item_active = "Manage";
                                     $result_customer_payment = $db->query($sql_customer_payment);
                                     $row_customer_payment = $result_customer_payment->fetch_assoc();
 
-                                    $pay_amount = $row_customer_payment['PaidAmount'];
+                                   if ($row_customer_payment) { // Check if the query returned any results
+                                        $pay_amount = $row_customer_payment['PaidAmount'];
+                                    } else {
+                                        $pay_amount = 0; // Set a default value if no payment found
+                                    }
                                     ?>
 
                                     <table class="table table-bordered">
@@ -178,7 +182,7 @@ $breadcrumb_item_active = "Manage";
 
                                         </tbody>
                                     </table>
-                                    <input type="submit" action="submit" value="Confirm Payment" class="btn btn-success">
+<!--                                    <input type="submit" action="submit" value="Confirm Payment" class="btn btn-success">-->
                                 </form>
                             </div>
                         </div>

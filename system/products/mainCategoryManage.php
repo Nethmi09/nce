@@ -40,7 +40,7 @@ if ($_SERVER['REQUEST_METHOD'] == "POST" && @$action == 'update') {
                 <table id="" class="table table-bordered table-striped">
                     <thead>
                         <tr>
-                            <th>Main Category ID</th>
+                            <th>#</th>
                             <th>Main Category Name</th> 
                               <th>Status</th> 
                             <th>Set Activation Status</th> 
@@ -50,10 +50,11 @@ if ($_SERVER['REQUEST_METHOD'] == "POST" && @$action == 'update') {
                     <tbody>
                         <?php
                         if ($result->num_rows > 0) {
+                               $i = 1;
                             while ($row = $result->fetch_assoc()) {
                                 ?>
                                 <tr>
-                                    <td><?= $row['MainCategoryId'] ?></td>
+                                     <td><?= $i ?></td>
                                     <td><?= $row['MainCategoryName'] ?></td> 
                                      <td>
                                         <?php
@@ -113,6 +114,7 @@ if ($_SERVER['REQUEST_METHOD'] == "POST" && @$action == 'update') {
                                 </tr>
 
                                 <?php
+                                  $i++;
                             }
                         }
                         ?>

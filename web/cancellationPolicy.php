@@ -25,7 +25,13 @@ include '../config.php';
                 <h3><strong>Cancel Order</strong></h3>
                 <p>If you have placed an order on our website and have changed your mind, you can cancel the order before it is processed. Please keep an eye on your order status in the order history table.</p>
                 <p>If you have any concerns, feel free to contact us. Our hotline number (0712056162) is available from 9 AM to 5 PM on weekdays, except on public and company holidays.</p>
-
+                <br>
+                <h3><strong>Return Order</strong></h3>
+                <p>If you want to return the product please visit our shop and return it.</p>
+                
+                 <h3><strong>Reject Order</strong></h3>
+                <p>If your order status as display rejected please kindly submit your payment slip again.</p>
+                
             </div>
 
         </div>

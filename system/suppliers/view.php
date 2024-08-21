@@ -11,7 +11,7 @@ extract($_GET);
 
 <div class="row">
     <div class="col-12">
-        <a href="<?= SYS_URL ?>suppliers/manage.php" class="btn btn-dark mb-4"><i class="fas fa-arrow-left"></i> Back to Supplier List</a>
+        <a href="<?= SYS_URL ?>suppliers/manage.php" class="btn btn-dark mb-4"><i class="fas fa-arrow-left"></i> Back to Supplier Listing Table</a>
         <div class="card">
             <div class="card-header">
                 <h3 class="card-title">Supplier Details</h3>

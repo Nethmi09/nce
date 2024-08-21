@@ -164,7 +164,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && @$action == 'upload') {
                         <div class="row">
                             <div class="mb-3">
                                 <label for="payment_date">Upload Date:<span style="color: red;"> *</span></label>
-                                <input type="date" name="payment_date" id="payment_date" class="form-control border border-1" value="<?= @$payment_date ?>">
+                                <input type="date" name="payment_date" id="payment_date" class="form-control border border-1" value="<?= @$payment_date ?>" max="<?= date('Y-m-d'); ?>">
                                 <span class="text-danger"><?= @$message['payment_date'] ?></span>
                             </div>
                         </div>

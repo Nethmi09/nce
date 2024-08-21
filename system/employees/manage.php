@@ -30,7 +30,7 @@ $breadcrumb_item_active = "Manage";
                 <table id="" class="table table-bordered table-striped">
                     <thead>
                         <tr>
-                            <th>ID</th>
+                            <th>#</th>
                             <th>Employee Name</th>
                             <th>Contact Mobile</th>
                             <th>Designation</th>
@@ -43,11 +43,12 @@ $breadcrumb_item_active = "Manage";
                     <tbody>
                         <?php
                         if ($result->num_rows > 0) {
+                                $i = 1;
                             while ($row = $result->fetch_assoc()) {
                                 $statusClass = $row['EmployeeStatusName'] === 'Working' ? 'text-success' : 'text-danger';
                                 ?>
                                 <tr>
-                                    <td><?= $row['EmployeeId'] ?></td>
+                                     <td><?= $i ?></td>
                                     <td><?= $row['EmployeeName'] ?></td> 
                                     <td><?= $row['ContactMobile'] ?></td> 
                                     <td><?= $row['DesignationName'] ?></td> 
@@ -61,6 +62,7 @@ $breadcrumb_item_active = "Manage";
                                 </tr>
 
                                 <?php
+                                  $i++;
                             }
                         }
                         ?>

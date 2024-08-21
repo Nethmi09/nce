@@ -19,6 +19,7 @@ if ($_SERVER['REQUEST_METHOD'] == "POST" && @$action == 'update') {
 ?>
 <div class="row">
     <div class="col-12">
+        
         <a href="<?= SYS_URL ?>suppliers/add.php" class="btn btn-dark mb-4"><i class="fas fa-plus-circle"></i> Add New Supplier</a>
         <div class="card mt">
             <div class="card-header">

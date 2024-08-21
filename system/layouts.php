@@ -90,12 +90,7 @@ include_once 'init.php';
                 <!-- Right navbar links -->
                 <ul class="navbar-nav ml-auto">                   
 
-                    <li class="nav-item">
-                        <a class="nav-link" href="<?= SYS_URL ?>userProfile.php" role="button">
-                            <i class="fas fa-user"></i>
-                            My Profile
-                        </a>
-                    </li>
+                    
                     <li class="nav-item">
                         <a class="nav-link"  href="<?= SYS_URL ?>logout.php" role="button">
                             <i class="fas fa-sign-out-alt"></i>

@@ -21,7 +21,7 @@ include '../config.php';
                 <div class="col-12">
                     <div class="text-center mx-auto" style="max-width: 700px;">
                         <h1 class="text-primary">Registration Form</h1>
-                         <h4 class="text-primary">
+                        <h4 class="text-primary">
                             Already have an account?
                             <a href="register.php" class="text-primary" style="text-decoration: underline;">Login</a>
                         </h4>
@@ -79,14 +79,32 @@ include '../config.php';
                         }
 
                         //Advance validations------------------------------------------------
-
-                        if (ctype_alpha(str_replace(' ', '', $first_name)) === false) {
-                            $message['first_name'] = "Only letters and white space allowed";
+//                        if (ctype_alpha(str_replace(' ', '', $first_name)) === false) {
+//                            $message['first_name'] = "Only letters and white space allowed";
+//                        }
+//                        if (ctype_alpha(str_replace(' ', '', $last_name)) === false) {
+//                            $message['last_name'] = "Only letters and white space allowed";
+//                        }
+//                        
+//                        
+                        // Mobile Number validation----------------------
+                        if (!empty($contact_mobile)) {
+                            $mobilelength = strlen($contact_mobile);
+                            if ($mobilelength == 10) {
+                                if ($contact_mobile === '0000000000') {
+                                    $message['contact_mobile'] = "Please enter a valid mobile number";
+                                } if ($contact_mobile === '1111111111') {
+                                    $message['contact_mobile'] = "Please enter a valid  mobile number";
+                                } if ($contact_mobile === '0123456789') {
+                                    $message['contact_mobile'] = "Please enter a  proper mobile number";
+                                }
+                            } else {
+                                $message['contact_mobile'] = "The mobile bnumber should must have only 10 numbers";
+                            }
                         }
-                        if (ctype_alpha(str_replace(' ', '', $last_name)) === false) {
-                            $message['last_name'] = "Only letters and white space allowed";
-                        }
-
+                        
+                        
+                        
                         // Email validation(Email already exist or not)----------------------
 
                         if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
@@ -160,7 +178,9 @@ include '../config.php';
                             $reg_number = date('Y') . date('m') . date('d') . $user_id;
                             $_SESSION['RNO'] = $reg_number;
 
-                            echo $sql = "INSERT INTO customers(FirstName, LastName, AddressLine1, AddressLine2, City, DistrictId, ContactMobile, AlternateMobile, Email, RegNo, UserId) VALUES ('$first_name','$last_name','$address_line_1','$address_line_2','$city','$district','$contact_mobile','$alt_mobile','$email', '$reg_number' , '$user_id')";
+                            echo $sql = "INSERT INTO customers(FirstName, LastName, AddressLine1, AddressLine2, City, DistrictId, "
+                                    . "ContactMobile, AlternateMobile, Email, RegNo, UserId) VALUES ('$first_name','$last_name',"
+                                    . "'$address_line_1','$address_line_2','$city','$district','$contact_mobile','$alt_mobile','$email', '$reg_number' , '$user_id')";
                             $db->query($sql);
 
                             $msg = "<h1>Success</h1>";

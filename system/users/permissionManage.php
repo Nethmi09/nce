@@ -36,10 +36,10 @@ $breadcrumb_item_active = "Manage";
                             <th>User Name</th>  
                             <th>User Role</th> 
                             <th>Module Name</th>
-                            <th>Add </th>
+<!--                            <th>Add </th>
                             <th>View </th>
                             <th>Update </th>
-                            <th>Delete </th>
+                            <th>Delete </th>-->
                             <th>Actions</th>
                         </tr>
                     </thead>
@@ -55,10 +55,10 @@ $breadcrumb_item_active = "Manage";
                                     <td><?= $row['UserName'] ?></td> 
                                     <td><?= $row['Role'] ?></td> 
                                     <td><?= $row['ModuleName'] ?></td> 
-                                    <td><?= $row['Add'] ?></td> 
+<!--                                <td><?= $row['Add'] ?></td> 
                                     <td><?= $row['View'] ?></td> 
                                     <td><?= $row['Update'] ?></td> 
-                                    <td><?= $row['Delete'] ?></td> 
+                                    <td><?= $row['Delete'] ?></td> -->
 
                                     <td>
                                         

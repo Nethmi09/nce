@@ -38,7 +38,7 @@ if ($_SERVER['REQUEST_METHOD'] == "POST" && @$action == 'update') {
                 <table id="" class="table table-bordered table-striped">
                     <thead>
                         <tr>
-                            <th>Brand ID</th>
+                            <th>#</th>
                             <th>Brand Image</th>
                             <th>Brand Name</th>  
                             <th>Main Category Name</th> 
@@ -50,10 +50,11 @@ if ($_SERVER['REQUEST_METHOD'] == "POST" && @$action == 'update') {
                     <tbody>
                         <?php
                         if ($result->num_rows > 0) {
+                                $i = 1;
                             while ($row = $result->fetch_assoc()) {
                                 ?>
                                 <tr>
-                                    <td><?= $row['BrandId'] ?></td>
+                                  <td><?= $i ?></td>
                                     <td>
                                         <?php if (!empty($row['BrandImage'])): ?>
                                             <img src="../assets/dist/img/uploads/brands/<?= $row['BrandImage'] ?>" class="img-square elevation-2" width="50">
@@ -121,6 +122,7 @@ if ($_SERVER['REQUEST_METHOD'] == "POST" && @$action == 'update') {
                                 </tr>
 
                                 <?php
+                                  $i++;
                             }
                         }
                         ?>

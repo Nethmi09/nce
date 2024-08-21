@@ -82,23 +82,6 @@ $disabled = ($orderStatus == 7 || $orderStatus == 8) ? 'disabled' : '';
         <div class="p-5 bg-light rounded">
             <div class="row g-4">
 
-                <div class="row mt-4">
-                    <div class="col">
-                        <div class="card">
-                            <div class="card-body">
-                                <h3><u>Order Status</u></h3>
-                                <?php
-                                if ($orderStatus == 7) {
-                                    echo "<span class='badge bg-success'>Accepted</span>";
-                                } elseif ($orderStatus == 8) {
-                                    echo "<span class='badge bg-danger'>Rejected</span>";
-                                    echo "<p>Reason: {$row['RejectReason']}</p>";
-                                }
-                                ?>
-                            </div>
-                        </div>
-                    </div>
-                </div>
 
                 <div class="row mt-4">
                     <div class="col">
@@ -160,56 +143,14 @@ $disabled = ($orderStatus == 7 || $orderStatus == 8) ? 'disabled' : '';
                     </div>
                 </div>
 
-                <div class="row mt-4">
-                    <div class="col">
-                        <form method="POST" action="">
-                            <input type="hidden" name="orderid" value="<?= $orderid ?>">
-                            <div class="form-group">
-                                <button type="submit" name="accept" class="btn btn-success" <?= $disabled ?>>Accept</button>
-                            </div>
-                            <div class="form-group mt-2">
-                                <button type="button" class="btn btn-danger" <?= $disabled ?> onclick="showRejectModal()">Reject</button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
+               
 
             </div>
         </div>
     </div>
 </div>
 
-<!-- Reject Modal -->
-<div class="modal fade" id="rejectModal" tabindex="-1" role="dialog" aria-labelledby="rejectModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <form method="POST" action="">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="rejectModalLabel">Reject Order</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <div class="form-group">
-                        <label for="rejectReason">Reason for Rejection</label>
-                        <textarea class="form-control" id="rejectReason" name="rejectReason" required></textarea>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <button type="submit" name="reject" class="btn btn-danger">Submit</button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
 
-<script>
-function showRejectModal() {
-    $('#rejectModal').modal('show');
-}
-</script>
 
 <?php
 include 'footer.php';

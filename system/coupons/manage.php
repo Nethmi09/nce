@@ -109,8 +109,8 @@ if ($_SERVER['REQUEST_METHOD'] == "POST" && @$action == 'update') {
                                     <td>
                                         <!--Display buttons for viewing, editing, and deleting a coupon-->
                                         <!-- Link to view, edit, delete the details of a specific coupon based on its ID -->
-                                        <!-- 'CouponId' parameter in the URL is used to specify the unique ID of the coupon for viewing, editing, and deleting its details -->
-                                        <a href="<?= SYS_URL ?>coupons/view.php?couponid=<?= $row['CouponId'] ?>" class="btn btn-info"><i class="fas fa-eye"></i></a>
+                                        <!-- 'CouponId' parameter in the URL is used to specify the unique ID of the coupon for editing, and deleting its details -->
+                                       
                                         <a href="<?= SYS_URL ?>coupons/edit.php?couponid=<?= $row['CouponId'] ?>" class="btn btn-warning"><i class="fas fa-edit"></i></a>
                                         <!-- Calls the confirmDelete() function to confirm the deletion of a coupon when the button is clicked -->
 <!--                                        <a href="<?= SYS_URL ?>coupons/delete.php?couponid=<?= $row['CouponId'] ?>" class="btn btn-danger" onclick="return confirmDelete()"><i class="fas fa-trash"></i></a>-->

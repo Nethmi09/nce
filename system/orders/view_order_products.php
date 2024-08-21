@@ -128,6 +128,70 @@ $order_status = $row['OrderStatus'];
                     </div>
                 </div>
 
+                <?php
+                $db = dbConn();
+
+                $sql = "SELECT 
+    o.OrderId,
+    o.ProductId,
+    o.UnitPrice,
+    o.Quantity,
+    p.ProductName,
+    o.IssuedQuantity,
+    (COALESCE(stock_totals.total_qty, 0) - COALESCE(stock_totals.total_issued_qty, 0)) AS balance_qty
+FROM 
+    order_products o 
+INNER JOIN 
+    products p ON p.ProductId = o.ProductId 
+LEFT JOIN 
+    (
+        SELECT 
+            ProductId,
+            UnitPrice,
+            SUM(Quantity) AS total_qty, 
+            SUM(IssuedQuantity) AS total_issued_qty 
+        FROM 
+            product_stocks 
+        GROUP BY 
+            ProductId,UnitPrice
+    ) AS stock_totals ON stock_totals.ProductId = o.ProductId and  stock_totals.UnitPrice=o.UnitPrice
+WHERE 
+    o.OrderId = '$order_id'
+GROUP BY 
+    o.OrderId, o.ProductId, o.UnitPrice;
+";
+                $result = $db->query($sql);
+                ?>
+                <form action="../inventory/issue.php" method="post">
+                    <h3>Order Products</h3>
+                    <table id="" class="table table-bordered table-striped">
+                        <thead>
+                            <tr>
+                                <th>Product</th>
+                                <th>Unit Price</th>  
+                                <th>Ordered Qty</th>              
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php
+                            if ($result->num_rows > 0) {
+                                while ($row = $result->fetch_assoc()) {
+                                    ?>
+                                    <tr>
+                                        <td><?= $row['ProductName'] ?></td>
+                                        <td><?= $row['UnitPrice'] ?></td>
+                                        <td><?= $row['Quantity'] ?></td>
+                                        
+                                    </tr>
+
+                                    <?php
+                                }
+                            }
+                            ?>
+                        </tbody>
+                    </table>
+                   
+                </form>
              
 
             </div>

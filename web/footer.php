@@ -18,7 +18,7 @@
                     <a class="btn-link" href="contact.php">Contact Us</a>
                     <a class="btn-link" href="privacyPolicy.php">Privacy Policy</a>
                     <a class="btn-link" href="termsAndCond.php">Terms & Condition</a>
-                    <a class="btn-link" href="cancellationPolicy.php">Cancellation Policy</a>
+                    <a class="btn-link" href="cancellationPolicy.php">Cancellation/Rejection Policy</a>
                     <a class="btn-link" href="deliveryPolicy.php">Delivery Policy</a>
 
                 </div>

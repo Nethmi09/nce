@@ -16,7 +16,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $address_line_1 = dataClean($address_line_1);
     $address_line_2 = dataClean($address_line_2);
     $city = dataClean($city);
-    $district = dataClean($district);
     $account_name = dataClean($account_name);
     $account_number = dataClean($account_number);
     $bank_name = dataClean($bank_name);

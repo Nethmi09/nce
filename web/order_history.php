@@ -31,7 +31,7 @@ include '../config.php';
 
                 $test = $row1['CustomerId'];
 
-                $sql = "SELECT * FROM orders o WHERE o.CustomerId='$test' ";
+                $sql = "SELECT * FROM orders o WHERE o.CustomerId='$test' ORDER BY `OrderId` DESC ";
 
                 $result = $db->query($sql);
                 ?>

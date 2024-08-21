@@ -382,7 +382,7 @@ include '../config.php';
         <div class="owl-carousel vegetable-carousel justify-content-center">
             <?php
             $db = dbConn(); 
-            $sql = "SELECT * FROM products WHERE Status = '1' ORDER BY ProductId Desc LIMIT 8";
+            $sql = "SELECT * FROM products WHERE PStatus = '1' ORDER BY ProductId Desc LIMIT 8";
             $result = $db->query($sql);
 
             if ($result->num_rows > 0) {

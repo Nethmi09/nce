@@ -10,7 +10,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     extract($_POST);
     $brand_name = dataClean($brand_name);
     $description = dataClean($description);
-    $main_category = dataClean($main_category);
 
     $message = array();
 

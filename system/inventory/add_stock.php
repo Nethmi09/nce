@@ -57,7 +57,7 @@ $breadcrumb_item_active = "Add Stock";
                     foreach ($ProductId as $key => $value) {
                         $q = $Quantity[$key];
                         $up = $UnitPrice[$key];
-                        $sql = "INSERT INTO product_stocks(ProductId, Quantity, UnitPrice, PurchaseDate, InvoiceNumber, SupplierId) VALUES ('$value','$q','$up','$purchase_date','$invoice','$supplier')";
+                        $sql = "INSERT INTO product_stocks(ProductId, Quantity, UnitPrice, PurchaseDate, InvoiceNumber, SupplierId,Status) VALUES ('$value','$q','$up','$purchase_date','$invoice','$supplier','1')";
                         $db->query($sql);
                     }
 
@@ -80,7 +80,7 @@ $breadcrumb_item_active = "Add Stock";
                             <label for="supplier">Supplier<span style = "color : red"> * </span></label>
                             <?php
                             $db = dbConn();
-                            $sql = "SELECT * FROM  suppliers";
+                            $sql = "SELECT * FROM  suppliers WHERE Status=1";
                             $result = $db->query($sql);
                             ?>
                             <select name="supplier" id="supplier"  class="form-control mb-1" value="<?= @$supplier ?>" aria-label="Large select example">
@@ -125,7 +125,7 @@ $breadcrumb_item_active = "Add Stock";
                                         <option value="" disabled selected>Select Product</option>
                                         <?php
                                         $db = dbConn();
-                                        $sql = "SELECT ProductId, ProductName FROM Products";
+                                        $sql = "SELECT ProductId, ProductName FROM Products WHERE PStatus=1";
                                         $result = $db->query($sql);
                                         if ($result->num_rows > 0) {
                                             while ($row = $result->fetch_assoc()) {

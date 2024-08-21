@@ -65,7 +65,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $_POST['action'] == 'processing') {
                 $sql = "SELECT o.*, c.FirstName, c.LastName
                         FROM orders o 
                         INNER JOIN customers c ON c.CustomerId = o.CustomerId
-                        WHERE o.OrderStatus IN (2,3,7)";
+                        WHERE o.OrderStatus IN (2,3,7) ORDER BY `OrderId` DESC";
                 $result = $db->query($sql);
                 ?>
                 <!--Table Start-->

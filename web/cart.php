@@ -28,10 +28,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET' && @$action == 'update_qty') {
 
         // Query to get available stock
         $db = dbConn();
-        $stock_query = "SELECT Quantity FROM product_stocks WHERE ProductId = '$productId'";
+        $stock_query = "SELECT Quantity, IssuedQuantity FROM product_stocks WHERE StockId = '$productId'";
         $stock_result = $db->query($stock_query);
         $stock_row = $stock_result->fetch_assoc();
-        $available_stock = $stock_row['Quantity'];
+        $available_stock = $stock_row['Quantity'] - $stock_row['IssuedQuantity'];
 
         if ($current_qty > $available_stock) {
             echo "<script>
@@ -40,8 +40,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET' && @$action == 'update_qty') {
                         icon: 'warning',
                         title: 'Requested Quantity Exceeds Available Stock',
                         text: 'Available quantity is $available_stock units.',
-                        showConfirmButton: false,
-                        timer: 4000
+                        showConfirmButton: true,
+                        confirmButtonText: 'OK'
+                    }).then(() => {
+                        window.location.href = 'cart.php'; // Redirect back to cart page
                     });
                   </script>";
         } else {
@@ -52,8 +54,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET' && @$action == 'update_qty') {
                         icon: 'success',
                         title: 'Quantity Updated',
                         text: 'Quantity updated successfully.',
-                        showConfirmButton: false,
-                        timer: 3000
+                        showConfirmButton: true,
+                        confirmButtonText: 'OK'
+                    }).then(() => {
+                        window.location.href = 'cart.php'; // Redirect back to cart page
                     });
                   </script>";
         }
@@ -64,8 +68,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET' && @$action == 'update_qty') {
                     icon: 'error',
                     title: 'Invalid Quantity',
                     text: 'Quantity must be a positive integer.',
-                    showConfirmButton: false,
-                    timer: 3000
+                    showConfirmButton: true,
+                    confirmButtonText: 'OK'
+                }).then(() => {
+                    window.location.href = 'cart.php'; // Redirect back to cart page
                 });
               </script>";
     }
@@ -77,8 +83,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET' && @$action == 'update_qty') {
 <?php
 extract($_POST);
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && @$action == "coupon") {
+   
     $db = dbConn();
-// Check coupan validation(status=1 valid coupon)
+    // Check coupon validation (status=1 valid coupon)
     $sql_coupon = "SELECT * FROM coupons WHERE CouponNumber='$couponCode' and Status='1'";
     $result_coupon = $db->query($sql_coupon);
 
@@ -107,7 +114,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && @$action == "coupon") {
     }
 }
 ?>
-
 
 <!-- Single Page Header start --> 
 <div class="container-fluid page-header py-5"> 
@@ -179,7 +185,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && @$action == "coupon") {
             </div> 
         </div> 
 
-
         <form method="POST" action="cart.php">
             <div class="mt-5">
                 <input type="hidden" name="action" value="update_coupan">
@@ -235,22 +240,22 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && @$action == "coupon") {
                         $_SESSION['profit'] = $profit;
                         $_SESSION['quantity'] = $noproducts;
                         ?>
-
-
-
                     </div> 
 
-                    <a class="btn border-secondary rounded-pill px-4 py-3 text-primary text-uppercase mb-4 ms-4" href="checkout.php">Checkout</a> 
+                    <?php if (!empty($_SESSION['cart'])): ?>
+                        <a class="btn border-secondary rounded-pill px-4 py-3 text-primary text-uppercase mb-4 ms-4" href="checkout.php">Checkout</a> 
+                    <?php else: ?>
+                        <button class="btn border-secondary rounded-pill px-4 py-3 text-primary text-uppercase mb-4 ms-4" disabled>Checkout</button>
+                    <?php endif; ?>
                 </div> 
             </div> 
         </div> 
         <!--Cart Total Card End --> 
+
     </div> 
 </div> 
-<!--Cart Page Content End --> 
-
+<!-- Cart Page Content End --> 
 
 <?php
 include 'footer.php';
-ob_end_flush();
 ?>

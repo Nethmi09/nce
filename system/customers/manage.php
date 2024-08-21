@@ -52,7 +52,7 @@ $breadcrumb_item_active = "Manage";
                                     <td>
                                         <!--customerid is a variable. This is call in view.php etc-->
                                         <a href="<?= SYS_URL ?>customers/view.php?customerid=<?= $row['CustomerId'] ?>" class="btn btn-info"><i class="fas fa-eye"></i></a>
-                                        
+<!--                                        <a href="<?= SYS_URL ?>customers/delete.php?customerid=<?= $row['CustomerId'] ?>" class="btn btn-danger" onclick="return confirmDelete()"><i class="fas fa-trash"></i></a>-->
                                     </td>
                                 </tr>
 

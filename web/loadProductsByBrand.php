@@ -17,7 +17,7 @@ if ($brandId == '0') {
                                 product_stocks.Quantity, product_stocks.UnitPrice, product_stocks.IssuedQuantity, categories.CategoryName 
                                     FROM product_stocks 
                                     INNER JOIN products ON (products.ProductId = product_stocks.ProductId) 
-                                    INNER JOIN categories ON (categories.CategoryId = products.CategoryId) WHERE products.ColorId='$brandId' AND products.Status = '1'
+                                    INNER JOIN categories ON (categories.CategoryId = products.CategoryId) WHERE products.BrandId='$brandId' AND products.PStatus = '1'
                                     GROUP BY products.ProductId, product_stocks.UnitPrice";
 }
 

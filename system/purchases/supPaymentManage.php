@@ -2,9 +2,9 @@
 ob_start();
 include_once '../init.php';
 
-$link = "Purchase Management";
-$breadcrumb_item1 = "Purchase Orders";
-$breadcrumb_item2 = "Manage";
+$link = "Supplier Payment Management";
+$breadcrumb_item = "Payment";
+$breadcrumb_item_active = "Manage";
 ?> 
 <div class="row">
     <div class="col-12">

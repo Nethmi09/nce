@@ -33,16 +33,23 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
 
         if (empty($message)) {
+            // Check if the user already has the selected module
+            $check_query = "SELECT * FROM user_modules WHERE UserId = '$user_name' AND ModuleId = '$module'";
+            $check_result = $db->query($check_query);
 
-            // Corrected SQL query
-            $sql = "INSERT INTO user_modules (UserId, ModuleId, RoleId, `Add`, `View`, `Update`, `Delete`) 
-                    VALUES ('$user_name', '$module', '$role_id', '$add', '$view', '$update', '$delete')";
-
-            if ($db->query($sql) === FALSE) {
-                echo "Error: " . $db->error;
+            if ($check_result && $check_result->num_rows > 0) {
+                $message['module'] = "This module has already been assigned to the selected user.";
             } else {
-                header("Location: permissionManage.php");
-                exit(); // Ensure script exits after redirection
+                // Insert the new permission
+                $sql = "INSERT INTO user_modules (UserId, ModuleId, RoleId, `Add`, `View`, `Update`, `Delete`) 
+                        VALUES ('$user_name', '$module', '$role_id', '$add', '$view', '$update', '$delete')";
+
+                if ($db->query($sql) === FALSE) {
+                    echo "Error: " . $db->error;
+                } else {
+                    header("Location: permissionManage.php");
+                    exit(); // Ensure script exits after redirection
+                }
             }
         }
     }
@@ -153,4 +160,3 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 $content = ob_get_clean(); // Capture the output buffer content
 include '../layouts.php'; // Include the layout for the page
 ?>
-

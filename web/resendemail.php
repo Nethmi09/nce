@@ -48,7 +48,7 @@ include '../config.php';
                             $msg = "<h1>SUCCESS</h1>";
                             $msg .= "<h2>Congratulations</h2>";
                             $msg .= "<p>Your account has been successfully created</p>";
-                            $msg .= "<a href='http://localhost/bittest/verify.php?token=$token'>Click here to verifiy your account</a>";
+                            $msg .= "<a href='http://localhost/nce/verify.php?token=$token'>Click here to verifiy your account</a>";
                             sendEmail($myemail, $first_name, "Account Verification", $msg);
 
                             echo "Verification email has been sent..!";

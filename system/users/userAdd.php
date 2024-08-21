@@ -153,7 +153,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         <div class="form-group col-md-12">
                             <?php
                             $db = dbConn();
-                            $sql = "SELECT * FROM  user_role";
+                            $sql = "SELECT * FROM  user_role WHERE Status=1";
                             $result = $db->query($sql);
                             ?>
                             <label for="role_name">Role Name<span style = "color : red;"> * </span></label>

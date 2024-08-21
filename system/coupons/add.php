@@ -37,7 +37,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     if (empty($message)) {
         $db = dbConn();
-        $sql = "INSERT INTO coupons (CouponNumber, Discount, OrderCount, Status) VALUES ('$couponNumber', '$discount', '$orderCount', '1')";
+        $sql = "INSERT INTO coupons (CouponNumber, Discount, order_count, Status) VALUES ('$couponNumber', '$discount', '$orderCount', '1')";
         $db->query($sql);
 
         header("Location: manage.php");
@@ -53,7 +53,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         <a href="<?= SYS_URL ?>coupons/manage.php" class="btn btn-dark mb-4"><i class="fas fa-arrow-left"></i> Back to Coupons Listing Table</a>
         <div class="card">
             <div class="card-header">
-                <h3 class="card-title">Add New Coupon</h3>
+                <h3 class="card-title">updateCoupon</h3>
             </div>   
 
             <!--Form Start-->

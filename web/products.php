@@ -82,7 +82,7 @@ include '../config.php';
         <h1 class="mb-4">Shop All</h1>
         <div class="row g-4">
             <div class="col-lg-12">
-               
+
                 <div class="row g-4">
                     <div class="col-lg-3">
                         <div class="row g-4">
@@ -124,13 +124,13 @@ include '../config.php';
                                         ?>
                                         <li><a href="#" onclick="loadProductsByCategory('0')">All</a></li>
                                     </ul>
-                                    
+
                                 </div>
 
                                 <br>
                                 <div class="mb-3">
                                     <h4>Filter By Brands</h4>
-                                     <ul>
+                                    <ul>
                                         <?php
                                         $db = dbConn();
                                         $sql = "SELECT * FROM brands WHERE BStatus = '1'";
@@ -150,7 +150,7 @@ include '../config.php';
                                 <br>
                                 <div class="mb-3">
                                     <h4>Filter By Colors</h4>
-                                     <ul>
+                                    <ul>
                                         <?php
                                         $db = dbConn();
                                         $sql = "SELECT * FROM colors WHERE Status = '1'";
@@ -177,11 +177,13 @@ include '../config.php';
                             <?php
                             $db = dbConn();
                             $sql = "SELECT product_stocks.StockId, products.ProductName, products.ProductImage, 
-                                product_stocks.Quantity, product_stocks.UnitPrice, product_stocks.IssuedQuantity, categories.CategoryName 
-                                    FROM product_stocks 
-                                    INNER JOIN products ON (products.ProductId = product_stocks.ProductId) 
-                                    INNER JOIN categories ON (categories.CategoryId = products.CategoryId) 
-                                    GROUP BY products.ProductId, product_stocks.UnitPrice";
+        product_stocks.Quantity, product_stocks.UnitPrice, product_stocks.IssuedQuantity, categories.CategoryName 
+        FROM product_stocks 
+        INNER JOIN products ON (products.ProductId = product_stocks.ProductId) 
+        INNER JOIN categories ON (categories.CategoryId = products.CategoryId) 
+        WHERE product_stocks.Status = 1
+        GROUP BY products.ProductId, product_stocks.UnitPrice";
+
                             $result = $db->query($sql);
 
                             if ($result->num_rows > 0) {
